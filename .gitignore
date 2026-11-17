@@ -1,0 +1,33 @@
+# Environments and Secrets
+.env
+.env.local
+*.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+backend/venv/
+.venv/
+env/
+dist/
+build/
+*.egg-info/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Node
+node_modules/
+frontend/dist/
+frontend/dist-ssr/
+*.local
+
+# Database
+postgres_data/
+*.sqlite3
+*.db
+
+# OS
+.DS_Store
+Thumbs.db

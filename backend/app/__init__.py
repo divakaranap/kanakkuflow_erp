@@ -1,0 +1,1 @@
+"""FACTORYFLOW backend application."""
