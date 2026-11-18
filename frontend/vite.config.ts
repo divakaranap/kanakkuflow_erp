@@ -9,8 +9,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'robots.txt'],
       manifest: {
-        name: 'FACTORYFLOW - Food ERP',
-        short_name: 'FACTORYFLOW',
+        name: 'KANAKKUFLOW - Food ERP',
+        short_name: 'KANAKKUFLOW',
         description: 'Integrated Order-to-Audit Management System for Small Food Manufacturers',
         theme_color: '#1e40af',
         background_color: '#f8fafc',

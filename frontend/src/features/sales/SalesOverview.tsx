@@ -279,44 +279,44 @@ export function SalesOverview() {
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-          <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Sales Invoiced</span>
-          <div className="text-xl font-bold text-slate-900 mt-1">{formatINR(totalSalesValPaise)}</div>
-          <span className="text-[11px] text-slate-500 mt-1 block">{invoices.filter((i) => i.status === 'POSTED').length} Posted Invoices</span>
+        <div className="bg-white p-5 rounded-2xl border border-[#EAE8F1] shadow-card">
+          <span className="text-[11px] font-bold text-[#77758A] uppercase tracking-wider">Total Sales Invoiced</span>
+          <div className="text-2xl font-extrabold text-[#17152B] mt-1">{formatINR(totalSalesValPaise)}</div>
+          <span className="text-[11px] text-[#77758A] mt-1 block">{invoices.filter((i) => i.status === 'POSTED').length} Posted Invoices</span>
         </div>
 
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-          <span className="text-xs font-semibold text-blue-600 uppercase tracking-wider">GST Collected</span>
-          <div className="text-xl font-bold text-blue-900 mt-1">{formatINR(totalGstValPaise)}</div>
-          <span className="text-[11px] text-slate-500 mt-1 block">CGST + SGST + IGST</span>
+        <div className="bg-white p-5 rounded-2xl border border-[#EAE8F1] shadow-card">
+          <span className="text-[11px] font-bold text-[#7655E8] uppercase tracking-wider">GST Collected</span>
+          <div className="text-2xl font-extrabold text-[#7655E8] mt-1">{formatINR(totalGstValPaise)}</div>
+          <span className="text-[11px] text-[#77758A] mt-1 block">CGST + SGST + IGST</span>
         </div>
 
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-          <span className="text-xs font-semibold text-amber-600 uppercase tracking-wider">Pending Approval</span>
-          <div className="text-xl font-bold text-amber-900 mt-1">{pendingApprovalsCount} Orders</div>
-          <span className="text-[11px] text-slate-500 mt-1 block">Awaiting Admin check</span>
+        <div className="bg-white p-5 rounded-2xl border border-[#EAE8F1] shadow-card">
+          <span className="text-[11px] font-bold text-[#E9A23B] uppercase tracking-wider">Pending Approval</span>
+          <div className="text-2xl font-extrabold text-[#E9A23B] mt-1">{pendingApprovalsCount} Orders</div>
+          <span className="text-[11px] text-[#77758A] mt-1 block">Awaiting Admin check</span>
         </div>
 
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-          <span className="text-xs font-semibold text-emerald-600 uppercase tracking-wider">Ready for Invoicing</span>
-          <div className="text-xl font-bold text-emerald-900 mt-1">{readyToInvoiceCount} Orders</div>
-          <span className="text-[11px] text-slate-500 mt-1 block">Approved by Admin</span>
+        <div className="bg-white p-5 rounded-2xl border border-[#EAE8F1] shadow-card">
+          <span className="text-[11px] font-bold text-[#16A36A] uppercase tracking-wider">Ready for Invoicing</span>
+          <div className="text-2xl font-extrabold text-[#16A36A] mt-1">{readyToInvoiceCount} Orders</div>
+          <span className="text-[11px] text-[#77758A] mt-1 block">Approved by Admin</span>
         </div>
 
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-          <span className="text-xs font-semibold text-purple-600 uppercase tracking-wider">Total Orders</span>
-          <div className="text-xl font-bold text-purple-900 mt-1">{orders.length}</div>
-          <span className="text-[11px] text-slate-500 mt-1 block">All statuses</span>
+        <div className="bg-white p-5 rounded-2xl border border-[#EAE8F1] shadow-card">
+          <span className="text-[11px] font-bold text-[#9675F5] uppercase tracking-wider">Total Orders</span>
+          <div className="text-2xl font-extrabold text-[#17152B] mt-1">{orders.length}</div>
+          <span className="text-[11px] text-[#77758A] mt-1 block">All registered orders</span>
         </div>
       </div>
 
       {/* Navigation Tabs */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
-        <div className="flex items-center space-x-1 overflow-x-auto">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-2.5 rounded-2xl border border-[#EAE8F1] shadow-card">
+        <div className="flex items-center space-x-1.5 overflow-x-auto">
           <button
             onClick={() => setActiveTab('orders')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1.5 transition ${
-              activeTab === 'orders' ? 'bg-blue-600 text-white' : 'text-slate-600 hover:bg-slate-100'
+            className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center space-x-1.5 transition ${
+              activeTab === 'orders' ? 'bg-[#F2EEFF] text-[#7655E8] shadow-xs' : 'text-[#77758A] hover:bg-[#F8F7FC] hover:text-[#17152B]'
             }`}
           >
             <ShoppingCart className="h-4 w-4" />
@@ -325,8 +325,8 @@ export function SalesOverview() {
 
           <button
             onClick={() => setActiveTab('new-order')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1.5 transition ${
-              activeTab === 'new-order' ? 'bg-blue-600 text-white' : 'text-slate-600 hover:bg-slate-100'
+            className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center space-x-1.5 transition ${
+              activeTab === 'new-order' ? 'bg-[#F2EEFF] text-[#7655E8] shadow-xs' : 'text-[#77758A] hover:bg-[#F8F7FC] hover:text-[#17152B]'
             }`}
           >
             <Plus className="h-4 w-4" />
@@ -335,8 +335,8 @@ export function SalesOverview() {
 
           <button
             onClick={() => setActiveTab('invoices')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1.5 transition ${
-              activeTab === 'invoices' ? 'bg-blue-600 text-white' : 'text-slate-600 hover:bg-slate-100'
+            className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center space-x-1.5 transition ${
+              activeTab === 'invoices' ? 'bg-[#F2EEFF] text-[#7655E8] shadow-xs' : 'text-[#77758A] hover:bg-[#F8F7FC] hover:text-[#17152B]'
             }`}
           >
             <FileText className="h-4 w-4" />
@@ -346,8 +346,8 @@ export function SalesOverview() {
           {selectedInvoice && (
             <button
               onClick={() => setActiveTab('invoice-preview')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1.5 transition ${
-                activeTab === 'invoice-preview' ? 'bg-blue-600 text-white' : 'text-slate-600 hover:bg-slate-100'
+              className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center space-x-1.5 transition ${
+                activeTab === 'invoice-preview' ? 'bg-[#F2EEFF] text-[#7655E8] shadow-xs' : 'text-[#77758A] hover:bg-[#F8F7FC] hover:text-[#17152B]'
               }`}
             >
               <Eye className="h-4 w-4" />
@@ -357,8 +357,8 @@ export function SalesOverview() {
 
           <button
             onClick={() => setActiveTab('mobile-order')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1.5 transition ${
-              activeTab === 'mobile-order' ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'
+            className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center space-x-1.5 transition ${
+              activeTab === 'mobile-order' ? 'bg-emerald-50 text-[#16A36A] border border-emerald-200' : 'text-[#77758A] hover:bg-[#F8F7FC] hover:text-[#17152B]'
             }`}
           >
             <Smartphone className="h-4 w-4" />
@@ -372,11 +372,11 @@ export function SalesOverview() {
             loadInvoices()
           }}
           disabled={loading}
-          className="p-1.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-100 text-slate-600 transition self-end sm:self-auto flex items-center gap-1"
+          className="p-2 rounded-xl border border-[#EAE8F1] bg-[#F8F7FC] hover:bg-white text-[#77758A] hover:text-[#17152B] transition self-end sm:self-auto flex items-center gap-1.5 shadow-xs"
           title="Refresh"
         >
-          <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin text-blue-600' : ''}`} />
-          {loading && <span className="text-xs text-blue-600 font-medium">Syncing...</span>}
+          <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin text-[#7655E8]' : ''}`} />
+          {loading && <span className="text-xs text-[#7655E8] font-bold">Syncing...</span>}
         </button>
       </div>
 
@@ -835,7 +835,7 @@ export function SalesOverview() {
           {/* Parties Header */}
           <div className="grid grid-cols-2 gap-6 p-4 bg-slate-50 rounded-xl border border-slate-200 text-xs">
             <div>
-              <span className="font-bold text-slate-900 block mb-1">FACTORYFLOW FOODS PRIVATE LIMITED</span>
+              <span className="font-bold text-slate-900 block mb-1">KANAKKUFLOW FOODS PRIVATE LIMITED</span>
               <p className="text-slate-600">Plot 12, Food Processing SEZ, Thuvakudi, Tiruchirappalli, Tamil Nadu</p>
               <p className="font-mono mt-1 text-slate-700">GSTIN: {selectedInvoice.seller_gstin}</p>
               <p className="text-slate-500 mt-0.5">State Code: 33 (Tamil Nadu)</p>

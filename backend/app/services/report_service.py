@@ -155,7 +155,7 @@ def export_table_to_excel(title: str, headers: List[str], rows: List[List[Any]])
     # Header title banner
     ws.merge_cells("A1:G1")
     title_cell = ws["A1"]
-    title_cell.value = f"FACTORYFLOW ERP - {title.upper()}"
+    title_cell.value = f"KANAKKUFLOW ERP - {title.upper()}"
     title_cell.font = Font(name="Calibri", size=14, bold=True, color="FFFFFF")
     title_cell.fill = PatternFill(start_color="1E3A8A", end_color="1E3A8A", fill_type="solid")
     title_cell.alignment = Alignment(horizontal="center", vertical="center")
@@ -256,7 +256,7 @@ def export_table_to_pdf(title: str, headers: List[str], rows: List[List[Any]], c
     )
 
     story = []
-    seller_name = getattr(settings, "COMPANY_NAME", "FACTORYFLOW FOOD PRODUCTS")
+    seller_name = getattr(settings, "COMPANY_NAME", "KANAKKUFLOW FOOD PRODUCTS")
     seller_gstin = getattr(settings, "COMPANY_GSTIN", "33AABCF1234F1Z5")
 
     story.append(Paragraph(f"<b>{seller_name}</b>", title_style))

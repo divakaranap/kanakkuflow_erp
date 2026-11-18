@@ -364,55 +364,55 @@ export function InventoryOverview() {
 
       {/* KPI Cards Header */}
       <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-          <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Inventory Valuation</span>
-          <div className="text-xl font-bold text-slate-900 mt-1">
+        <div className="bg-white p-5 rounded-2xl border border-[#EAE8F1] shadow-card">
+          <span className="text-[11px] font-bold text-[#77758A] uppercase tracking-wider">Total Inventory Valuation</span>
+          <div className="text-2xl font-extrabold text-[#17152B] mt-1">
             {formatINR(valuation?.total_valuation_paise || 0)}
           </div>
-          <span className="text-[11px] text-slate-500 mt-1 block">Moving weighted average</span>
+          <span className="text-[11px] text-[#77758A] mt-1 block">Moving weighted average</span>
         </div>
 
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-          <span className="text-xs font-semibold text-blue-600 uppercase tracking-wider">Raw Materials Valuation</span>
-          <div className="text-xl font-bold text-blue-900 mt-1">
+        <div className="bg-white p-5 rounded-2xl border border-[#EAE8F1] shadow-card">
+          <span className="text-[11px] font-bold text-[#7655E8] uppercase tracking-wider">Raw Materials Valuation</span>
+          <div className="text-2xl font-extrabold text-[#7655E8] mt-1">
             {formatINR(valuation?.raw_materials_valuation_paise || 0)}
           </div>
-          <span className="text-[11px] text-slate-500 mt-1 block">Flour, Oil, Spices</span>
+          <span className="text-[11px] text-[#77758A] mt-1 block">Flour, Oil, Spices</span>
         </div>
 
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-          <span className="text-xs font-semibold text-purple-600 uppercase tracking-wider">Packaging Valuation</span>
-          <div className="text-xl font-bold text-purple-900 mt-1">
+        <div className="bg-white p-5 rounded-2xl border border-[#EAE8F1] shadow-card">
+          <span className="text-[11px] font-bold text-[#9675F5] uppercase tracking-wider">Packaging Valuation</span>
+          <div className="text-2xl font-extrabold text-[#17152B] mt-1">
             {formatINR(valuation?.packaging_valuation_paise || 0)}
           </div>
-          <span className="text-[11px] text-slate-500 mt-1 block">Pouches & Cartons</span>
+          <span className="text-[11px] text-[#77758A] mt-1 block">Pouches &amp; Cartons</span>
         </div>
 
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-          <span className="text-xs font-semibold text-emerald-600 uppercase tracking-wider">Finished Goods Valuation</span>
-          <div className="text-xl font-bold text-emerald-900 mt-1">
+        <div className="bg-white p-5 rounded-2xl border border-[#EAE8F1] shadow-card">
+          <span className="text-[11px] font-bold text-[#16A36A] uppercase tracking-wider">Finished Goods Valuation</span>
+          <div className="text-2xl font-extrabold text-[#16A36A] mt-1">
             {formatINR(valuation?.finished_goods_valuation_paise || 0)}
           </div>
-          <span className="text-[11px] text-slate-500 mt-1 block">Packets in Stock</span>
+          <span className="text-[11px] text-[#77758A] mt-1 block">Packets in Stock</span>
         </div>
 
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-          <span className="text-xs font-semibold text-amber-600 uppercase tracking-wider">Low Stock Alerts</span>
-          <div className="text-xl font-bold text-amber-900 mt-1 flex items-center space-x-1.5">
-            <AlertTriangle className="h-5 w-5 text-amber-500" />
+        <div className="bg-white p-5 rounded-2xl border border-[#EAE8F1] shadow-card">
+          <span className="text-[11px] font-bold text-[#E9A23B] uppercase tracking-wider">Low Stock Alerts</span>
+          <div className="text-2xl font-extrabold text-[#E9A23B] mt-1 flex items-center space-x-1.5">
+            <AlertTriangle className="h-5 w-5 text-[#E9A23B]" />
             <span>{summaryItems.filter((i) => i.is_low_stock).length} Items</span>
           </div>
-          <span className="text-[11px] text-slate-500 mt-1 block">Below reorder point</span>
+          <span className="text-[11px] text-[#77758A] mt-1 block">Below reorder point</span>
         </div>
       </div>
 
       {/* Tabs and Actions Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
-        <div className="flex items-center space-x-1 overflow-x-auto">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-2.5 rounded-2xl border border-[#EAE8F1] shadow-card">
+        <div className="flex items-center space-x-1.5 overflow-x-auto">
           <button
             onClick={() => setActiveTab('summary')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1.5 transition ${
-              activeTab === 'summary' ? 'bg-blue-600 text-white' : 'text-slate-600 hover:bg-slate-100'
+            className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center space-x-1.5 transition ${
+              activeTab === 'summary' ? 'bg-[#F2EEFF] text-[#7655E8] shadow-xs' : 'text-[#77758A] hover:bg-[#F8F7FC] hover:text-[#17152B]'
             }`}
           >
             <Boxes className="h-4 w-4" />
@@ -421,8 +421,8 @@ export function InventoryOverview() {
 
           <button
             onClick={() => setActiveTab('purchases')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1.5 transition ${
-              activeTab === 'purchases' ? 'bg-blue-600 text-white' : 'text-slate-600 hover:bg-slate-100'
+            className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center space-x-1.5 transition ${
+              activeTab === 'purchases' ? 'bg-[#F2EEFF] text-[#7655E8] shadow-xs' : 'text-[#77758A] hover:bg-[#F8F7FC] hover:text-[#17152B]'
             }`}
           >
             <ShoppingCart className="h-4 w-4" />

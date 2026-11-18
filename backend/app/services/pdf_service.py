@@ -109,7 +109,7 @@ def generate_invoice_pdf_buffer(invoice: Any) -> BytesIO:
     story = []
 
     # 1. Header: Seller Info & Tax Invoice Badge
-    seller_name = getattr(settings, "SELLER_COMPANY_NAME", "FACTORYFLOW FOODS PRIVATE LIMITED")
+    seller_name = getattr(settings, "SELLER_COMPANY_NAME", "KANAKKUFLOW FOODS PRIVATE LIMITED")
     seller_gstin = invoice.seller_gstin or getattr(settings, "SELLER_GSTIN", "33AAAAF1234A1Z5")
     seller_addr = getattr(settings, "SELLER_ADDRESS", "Plot 12, Food Processing SEZ, Thuvakudi, Tiruchirappalli, Tamil Nadu 620015")
 
@@ -320,7 +320,7 @@ def generate_delivery_challan_pdf_buffer(dispatch: Any) -> BytesIO:
     story = []
 
     # 1. Header
-    seller_name = getattr(settings, "SELLER_COMPANY_NAME", "FACTORYFLOW FOODS PRIVATE LIMITED")
+    seller_name = getattr(settings, "SELLER_COMPANY_NAME", "KANAKKUFLOW FOODS PRIVATE LIMITED")
     seller_gstin = getattr(settings, "SELLER_GSTIN", "33AAAAF1234A1Z5")
     seller_addr = getattr(settings, "SELLER_ADDRESS", "Plot 12, Food Processing SEZ, Thuvakudi, Tiruchirappalli, Tamil Nadu 620015")
 
@@ -488,7 +488,7 @@ def generate_payment_receipt_pdf_buffer(payment: Any) -> BytesIO:
 
     story = []
 
-    seller_name = getattr(settings, "COMPANY_NAME", "FACTORYFLOW FOOD PRODUCTS")
+    seller_name = getattr(settings, "COMPANY_NAME", "KANAKKUFLOW FOOD PRODUCTS")
     seller_gstin = getattr(settings, "COMPANY_GSTIN", "33AABCF1234F1Z5")
     seller_address = getattr(settings, "COMPANY_ADDRESS", "Plot 12, Food Processing Zone, Thuvakudi, Tiruchirappalli - 620015, Tamil Nadu")
 

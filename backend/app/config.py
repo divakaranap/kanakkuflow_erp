@@ -3,7 +3,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    PROJECT_NAME: str = "FACTORYFLOW"
+    PROJECT_NAME: str = "KANAKKUFLOW"
     API_V1_STR: str = "/api/v1"
     
     # JWT & Security

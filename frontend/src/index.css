@@ -2,24 +2,45 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --bg-primary: #F8FAFC;
-  --bg-card: #FFFFFF;
-  --text-primary: #172033;
-  --text-secondary: #64748B;
-  --accent: #2563EB;
-  --success: #16A34A;
-  --warning: #D97706;
-  --danger: #DC2626;
-  --border: #E2E8F0;
+@layer base {
+  :root {
+    --primary-purple: #7655E8;
+    --secondary-purple: #9675F5;
+    --light-lavender: #F2EEFF;
+    --lavender-bg: #F8F7FC;
+    --main-bg: #FAFAFD;
+    --card-bg: #FFFFFF;
+    --primary-text: #17152B;
+    --secondary-text: #77758A;
+    --border-subtle: #EAE8F1;
+    --success: #16A36A;
+    --warning: #E9A23B;
+    --danger: #E05252;
+    --info: #4385E8;
+  }
+
+  body {
+    margin: 0;
+    background-color: #FAFAFD;
+    color: #17152B;
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 }
 
-body {
-  margin: 0;
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
-    Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* Custom subtle scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #F8F7FC;
+}
+::-webkit-scrollbar-thumb {
+  background: #EAE8F1;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #9675F5;
 }

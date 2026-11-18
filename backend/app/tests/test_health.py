@@ -3,7 +3,7 @@ def test_health_check(client):
     assert response.status_code == 200
     data = response.json()
     assert data["status"] == "ok"
-    assert data["app"] == "FACTORYFLOW"
+    assert data["app"] == "KANAKKUFLOW"
     assert "timestamp" in data
 
 
@@ -12,12 +12,12 @@ def test_api_v1_health_check(client):
     assert response.status_code == 200
     data = response.json()
     assert data["status"] == "ok"
-    assert data["app"] == "FACTORYFLOW"
+    assert data["app"] == "KANAKKUFLOW"
 
 
 def test_root_endpoint(client):
     response = client.get("/")
     assert response.status_code == 200
     data = response.json()
-    assert data["system"] == "FACTORYFLOW"
+    assert data["system"] == "KANAKKUFLOW"
     assert "tagline" in data

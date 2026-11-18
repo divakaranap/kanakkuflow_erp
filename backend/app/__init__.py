@@ -1,1 +1,1 @@
-"""FACTORYFLOW backend application."""
+"""KANAKKUFLOW backend application."""

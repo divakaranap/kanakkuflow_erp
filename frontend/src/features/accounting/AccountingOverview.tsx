@@ -167,34 +167,34 @@ export function AccountingOverview() {
   return (
     <div className="space-y-6">
       {/* Top Banner */}
-      <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div className="bg-white p-6 rounded-2xl border border-[#EAE8F1] shadow-card flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <div className="flex items-center space-x-2">
-            <span className="p-2 bg-indigo-50 text-indigo-600 rounded-lg">
+          <div className="flex items-center space-x-3">
+            <span className="p-2.5 bg-[#F2EEFF] text-[#7655E8] rounded-xl shadow-xs">
               <Scale className="h-5 w-5" />
             </span>
-            <h2 className="text-xl font-bold text-slate-900">General Ledger &amp; Financial Audit</h2>
+            <h2 className="text-xl sm:text-2xl font-extrabold text-[#17152B] tracking-tight">General Ledger &amp; Financial Audit</h2>
           </div>
-          <p className="text-xs text-slate-500 mt-1">
-            Phase 8: Double-entry accounting engine, Trial Balance invariance, General Ledger &amp; Auditor Trail.
+          <p className="text-xs text-[#77758A] mt-1">
+            Double-entry balanced accounting engine, Trial Balance invariance (Debit = Credit), General Ledger &amp; Auditor Trail.
           </p>
         </div>
 
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2.5">
           <button
             onClick={() => {
               loadBaseData()
               if (selectedAccountId) loadAccountLedger(selectedAccountId)
             }}
             disabled={loading}
-            className="px-3 py-2 text-xs font-semibold text-slate-600 hover:text-slate-900 border border-slate-200 rounded-lg bg-white flex items-center space-x-1 hover:bg-slate-50 transition"
+            className="px-3.5 py-2 text-xs font-bold text-[#17152B] hover:text-[#7655E8] border border-[#EAE8F1] rounded-xl bg-[#F8F7FC] flex items-center space-x-1.5 hover:bg-white transition shadow-xs"
           >
-            <RefreshCw className={`h-3.5 w-3.5 ${loading ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`h-3.5 w-3.5 ${loading ? 'animate-spin text-[#7655E8]' : ''}`} />
             <span>Refresh</span>
           </button>
           <button
             onClick={() => setActiveTab('new-journal')}
-            className="px-3.5 py-2 text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg flex items-center space-x-1.5 transition shadow-sm"
+            className="px-4 py-2 text-xs font-bold text-white bg-gradient-to-r from-[#7655E8] to-[#9675F5] hover:opacity-95 rounded-xl flex items-center space-x-1.5 transition shadow-md shadow-[#7655E8]/20"
           >
             <Plus className="h-4 w-4" />
             <span>Post Journal Voucher</span>
@@ -204,7 +204,7 @@ export function AccountingOverview() {
 
       {/* Notifications */}
       {errorMsg && (
-        <div className="p-4 bg-red-50 border border-red-200 rounded-xl flex items-center justify-between text-xs text-red-700">
+        <div className="p-4 bg-red-50 border border-red-200 rounded-2xl flex items-center justify-between text-xs text-red-700">
           <div className="flex items-center space-x-2">
             <XCircle className="h-4 w-4 flex-shrink-0" />
             <span>{errorMsg}</span>
@@ -215,7 +215,7 @@ export function AccountingOverview() {
         </div>
       )}
       {successMsg && (
-        <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center justify-between text-xs text-emerald-700">
+        <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center justify-between text-xs text-emerald-700">
           <div className="flex items-center space-x-2">
             <CheckCircle2 className="h-4 w-4 flex-shrink-0" />
             <span>{successMsg}</span>
@@ -227,63 +227,63 @@ export function AccountingOverview() {
       )}
 
       {/* Navigation Tabs */}
-      <div className="flex border-b border-slate-200 space-x-2 overflow-x-auto">
+      <div className="bg-[#F8F7FC] p-1.5 rounded-2xl border border-[#EAE8F1] flex items-center space-x-1 overflow-x-auto shadow-xs">
         <button
           onClick={() => setActiveTab('trial-balance')}
-          className={`py-2 px-4 text-xs font-semibold border-b-2 transition whitespace-nowrap ${
+          className={`py-2 px-4 rounded-xl text-xs font-bold transition whitespace-nowrap ${
             activeTab === 'trial-balance'
-              ? 'border-indigo-600 text-indigo-700 bg-indigo-50/50'
-              : 'border-transparent text-slate-600 hover:text-slate-900'
+              ? 'bg-white text-[#7655E8] shadow-sm'
+              : 'text-[#77758A] hover:text-[#17152B] hover:bg-white/50'
           }`}
         >
           Trial Balance
         </button>
         <button
           onClick={() => setActiveTab('ledger')}
-          className={`py-2 px-4 text-xs font-semibold border-b-2 transition whitespace-nowrap ${
+          className={`py-2 px-4 rounded-xl text-xs font-bold transition whitespace-nowrap ${
             activeTab === 'ledger'
-              ? 'border-indigo-600 text-indigo-700 bg-indigo-50/50'
-              : 'border-transparent text-slate-600 hover:text-slate-900'
+              ? 'bg-white text-[#7655E8] shadow-sm'
+              : 'text-[#77758A] hover:text-[#17152B] hover:bg-white/50'
           }`}
         >
           General Ledger
         </button>
         <button
           onClick={() => setActiveTab('journals')}
-          className={`py-2 px-4 text-xs font-semibold border-b-2 transition whitespace-nowrap ${
+          className={`py-2 px-4 rounded-xl text-xs font-bold transition whitespace-nowrap ${
             activeTab === 'journals'
-              ? 'border-indigo-600 text-indigo-700 bg-indigo-50/50'
-              : 'border-transparent text-slate-600 hover:text-slate-900'
+              ? 'bg-white text-[#7655E8] shadow-sm'
+              : 'text-[#77758A] hover:text-[#17152B] hover:bg-white/50'
           }`}
         >
           Journal Vouchers ({journalEntries.length})
         </button>
         <button
           onClick={() => setActiveTab('new-journal')}
-          className={`py-2 px-4 text-xs font-semibold border-b-2 transition whitespace-nowrap ${
+          className={`py-2 px-4 rounded-xl text-xs font-bold transition whitespace-nowrap ${
             activeTab === 'new-journal'
-              ? 'border-indigo-600 text-indigo-700 bg-indigo-50/50'
-              : 'border-transparent text-slate-600 hover:text-slate-900'
+              ? 'bg-white text-[#7655E8] shadow-sm'
+              : 'text-[#77758A] hover:text-[#17152B] hover:bg-white/50'
           }`}
         >
           Post Journal
         </button>
         <button
           onClick={() => setActiveTab('accounts')}
-          className={`py-2 px-4 text-xs font-semibold border-b-2 transition whitespace-nowrap ${
+          className={`py-2 px-4 rounded-xl text-xs font-bold transition whitespace-nowrap ${
             activeTab === 'accounts'
-              ? 'border-indigo-600 text-indigo-700 bg-indigo-50/50'
-              : 'border-transparent text-slate-600 hover:text-slate-900'
+              ? 'bg-white text-[#7655E8] shadow-sm'
+              : 'text-[#77758A] hover:text-[#17152B] hover:bg-white/50'
           }`}
         >
           Chart of Accounts ({accounts.length})
         </button>
         <button
           onClick={() => setActiveTab('audit')}
-          className={`py-2 px-4 text-xs font-semibold border-b-2 transition whitespace-nowrap ${
+          className={`py-2 px-4 rounded-xl text-xs font-bold transition whitespace-nowrap ${
             activeTab === 'audit'
-              ? 'border-indigo-600 text-indigo-700 bg-indigo-50/50'
-              : 'border-transparent text-slate-600 hover:text-slate-900'
+              ? 'bg-white text-[#7655E8] shadow-sm'
+              : 'text-[#77758A] hover:text-[#17152B] hover:bg-white/50'
           }`}
         >
           Audit Trail ({auditLogs.length})

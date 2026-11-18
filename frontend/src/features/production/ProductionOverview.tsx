@@ -348,55 +348,55 @@ export function ProductionOverview() {
 
       {/* KPI Cards Header */}
       <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-          <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Packets Produced</span>
-          <div className="text-xl font-bold text-slate-900 mt-1">
+        <div className="bg-white p-5 rounded-2xl border border-[#EAE8F1] shadow-card">
+          <span className="text-[11px] font-bold text-[#77758A] uppercase tracking-wider">Total Packets Produced</span>
+          <div className="text-2xl font-extrabold text-[#17152B] mt-1">
             {summary?.total_good_packets_produced || 0} Packets
           </div>
-          <span className="text-[11px] text-slate-500 mt-1 block">Good output across runs</span>
+          <span className="text-[11px] text-[#77758A] mt-1 block">Good output across runs</span>
         </div>
 
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-          <span className="text-xs font-semibold text-blue-600 uppercase tracking-wider">Overall Yield Rate</span>
-          <div className="text-xl font-bold text-blue-900 mt-1">
+        <div className="bg-white p-5 rounded-2xl border border-[#EAE8F1] shadow-card">
+          <span className="text-[11px] font-bold text-[#7655E8] uppercase tracking-wider">Overall Yield Rate</span>
+          <div className="text-2xl font-extrabold text-[#7655E8] mt-1">
             {summary?.overall_yield_pct?.toFixed(2) || '100.00'}%
           </div>
-          <span className="text-[11px] text-slate-500 mt-1 block">Actual vs Expected</span>
+          <span className="text-[11px] text-[#77758A] mt-1 block">Actual vs Expected</span>
         </div>
 
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-          <span className="text-xs font-semibold text-purple-600 uppercase tracking-wider">Total Production Cost</span>
-          <div className="text-xl font-bold text-purple-900 mt-1">
+        <div className="bg-white p-5 rounded-2xl border border-[#EAE8F1] shadow-card">
+          <span className="text-[11px] font-bold text-[#9675F5] uppercase tracking-wider">Total Production Cost</span>
+          <div className="text-2xl font-extrabold text-[#17152B] mt-1">
             {formatINR(summary?.total_production_cost_paise || 0)}
           </div>
-          <span className="text-[11px] text-slate-500 mt-1 block">Materials + Direct Overheads</span>
+          <span className="text-[11px] text-[#77758A] mt-1 block">Materials + Direct Overheads</span>
         </div>
 
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-          <span className="text-xs font-semibold text-emerald-600 uppercase tracking-wider">Avg Cost Per Packet</span>
-          <div className="text-xl font-bold text-emerald-900 mt-1">
+        <div className="bg-white p-5 rounded-2xl border border-[#EAE8F1] shadow-card">
+          <span className="text-[11px] font-bold text-[#16A36A] uppercase tracking-wider">Avg Cost Per Packet</span>
+          <div className="text-2xl font-extrabold text-[#16A36A] mt-1">
             {formatINR(summary?.avg_cost_per_packet_paise || 0)}/pkt
           </div>
-          <span className="text-[11px] text-slate-500 mt-1 block">Moving weighted average</span>
+          <span className="text-[11px] text-[#77758A] mt-1 block">Moving weighted average</span>
         </div>
 
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-          <span className="text-xs font-semibold text-amber-600 uppercase tracking-wider">Variance Alerts</span>
-          <div className="text-xl font-bold text-amber-900 mt-1 flex items-center space-x-1.5">
-            <AlertTriangle className="h-5 w-5 text-amber-500" />
+        <div className="bg-white p-5 rounded-2xl border border-[#EAE8F1] shadow-card">
+          <span className="text-[11px] font-bold text-[#E9A23B] uppercase tracking-wider">Variance Alerts</span>
+          <div className="text-2xl font-extrabold text-[#E9A23B] mt-1 flex items-center space-x-1.5">
+            <AlertTriangle className="h-5 w-5 text-[#E9A23B]" />
             <span>{summary?.runs_with_variance_alerts || 0} Runs</span>
           </div>
-          <span className="text-[11px] text-slate-500 mt-1 block">&gt; 3% tolerance threshold</span>
+          <span className="text-[11px] text-[#77758A] mt-1 block">&gt; 3% tolerance threshold</span>
         </div>
       </div>
 
       {/* Tabs and Actions */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
-        <div className="flex items-center space-x-1 overflow-x-auto">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-2.5 rounded-2xl border border-[#EAE8F1] shadow-card">
+        <div className="flex items-center space-x-1.5 overflow-x-auto">
           <button
             onClick={() => setActiveTab('runs')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1.5 transition ${
-              activeTab === 'runs' ? 'bg-blue-600 text-white' : 'text-slate-600 hover:bg-slate-100'
+            className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center space-x-1.5 transition ${
+              activeTab === 'runs' ? 'bg-[#F2EEFF] text-[#7655E8] shadow-xs' : 'text-[#77758A] hover:bg-[#F8F7FC] hover:text-[#17152B]'
             }`}
           >
             <Factory className="h-4 w-4" />
@@ -405,8 +405,8 @@ export function ProductionOverview() {
 
           <button
             onClick={() => setActiveTab('new-run')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1.5 transition ${
-              activeTab === 'new-run' ? 'bg-blue-600 text-white' : 'text-slate-600 hover:bg-slate-100'
+            className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center space-x-1.5 transition ${
+              activeTab === 'new-run' ? 'bg-[#F2EEFF] text-[#7655E8] shadow-xs' : 'text-[#77758A] hover:bg-[#F8F7FC] hover:text-[#17152B]'
             }`}
           >
             <Plus className="h-4 w-4" />
@@ -415,46 +415,51 @@ export function ProductionOverview() {
 
           <button
             onClick={() => setActiveTab('boms')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1.5 transition ${
-              activeTab === 'boms' ? 'bg-blue-600 text-white' : 'text-slate-600 hover:bg-slate-100'
+            className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center space-x-1.5 transition ${
+              activeTab === 'boms' ? 'bg-[#F2EEFF] text-[#7655E8] shadow-xs' : 'text-[#77758A] hover:bg-[#F8F7FC] hover:text-[#17152B]'
             }`}
           >
             <BookOpen className="h-4 w-4" />
-            <span>Bill of Materials (BOM)</span>
+            <span>Recipe BOMs</span>
           </button>
 
-          <button
-            onClick={() => setActiveTab('variance')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1.5 transition ${
-              activeTab === 'variance' ? 'bg-blue-600 text-white' : 'text-slate-600 hover:bg-slate-100'
-            }`}
-          >
-            <Scale className="h-4 w-4" />
-            <span>Variance Analysis</span>
-          </button>
+          {selectedRun && (
+            <>
+              <button
+                onClick={() => setActiveTab('variance')}
+                className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center space-x-1.5 transition ${
+                  activeTab === 'variance' ? 'bg-[#F2EEFF] text-[#7655E8] shadow-xs' : 'text-[#77758A] hover:bg-[#F8F7FC] hover:text-[#17152B]'
+                }`}
+              >
+                <Scale className="h-4 w-4" />
+                <span>Yield Variance</span>
+              </button>
 
-          <button
-            onClick={() => setActiveTab('costing')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1.5 transition ${
-              activeTab === 'costing' ? 'bg-blue-600 text-white' : 'text-slate-600 hover:bg-slate-100'
-            }`}
-          >
-            <DollarSign className="h-4 w-4" />
-            <span>Costing & Margins</span>
-          </button>
+              <button
+                onClick={() => setActiveTab('costing')}
+                className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center space-x-1.5 transition ${
+                  activeTab === 'costing' ? 'bg-[#F2EEFF] text-[#7655E8] shadow-xs' : 'text-[#77758A] hover:bg-[#F8F7FC] hover:text-[#17152B]'
+                }`}
+              >
+                <DollarSign className="h-4 w-4" />
+                <span>Cost Analysis</span>
+              </button>
+            </>
+          )}
         </div>
 
         <button
           onClick={() => {
             loadRuns()
             loadSummary()
+            if (activeTab === 'boms') loadBOMs()
           }}
           disabled={loading}
-          className="p-1.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-100 text-slate-600 transition self-end sm:self-auto flex items-center gap-1"
+          className="p-2 rounded-xl border border-[#EAE8F1] bg-[#F8F7FC] hover:bg-white text-[#77758A] hover:text-[#17152B] transition self-end sm:self-auto flex items-center gap-1.5 shadow-xs"
           title="Refresh"
         >
-          <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin text-blue-600' : ''}`} />
-          {loading && <span className="text-xs text-blue-600 font-medium">Syncing...</span>}
+          <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin text-[#7655E8]' : ''}`} />
+          {loading && <span className="text-xs text-[#7655E8] font-bold">Syncing...</span>}
         </button>
       </div>
 
