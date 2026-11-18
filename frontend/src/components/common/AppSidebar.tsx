@@ -8,7 +8,6 @@ import {
   Factory,
   Boxes,
   Database,
-  ChevronLeft,
   ChevronRight,
   LogOut,
 } from 'lucide-react'
@@ -102,16 +101,6 @@ export function AppSidebar({
               </div>
             </div>
           )}
-
-          <button
-            onClick={onToggleCollapse}
-            className={`p-1.5 text-[#77758A] hover:text-[#17152B] hover:bg-[#F8F7FC] rounded-lg transition-colors border border-transparent hover:border-[#EAE8F1] ${
-              isCollapsed ? 'hidden' : 'block'
-            }`}
-            title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-          >
-            <ChevronLeft className="h-4 w-4" />
-          </button>
         </div>
 
         {/* Sidebar Nav Items */}
