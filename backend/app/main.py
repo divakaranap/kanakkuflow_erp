@@ -27,6 +27,7 @@ from backend.app.api.sales import router as sales_router
 from backend.app.api.dispatches import router as dispatches_router
 from backend.app.api.payments import router as payments_router
 from backend.app.api.accounting import router as accounting_router
+from backend.app.api.reports import router as reports_router
 
 
 @asynccontextmanager
@@ -80,6 +81,8 @@ app.include_router(payments_router)
 app.include_router(payments_router, prefix="/api")
 app.include_router(accounting_router)
 app.include_router(accounting_router, prefix="/api")
+app.include_router(reports_router)
+app.include_router(reports_router, prefix="/api")
 
 # Versioned API routes (/api/v1/...)
 app.include_router(health_router, prefix=settings.API_V1_STR)
@@ -100,6 +103,7 @@ app.include_router(sales_router, prefix=settings.API_V1_STR)
 app.include_router(dispatches_router, prefix=settings.API_V1_STR)
 app.include_router(payments_router, prefix=settings.API_V1_STR)
 app.include_router(accounting_router, prefix=settings.API_V1_STR)
+app.include_router(reports_router, prefix=settings.API_V1_STR)
 
 
 @app.get("/")

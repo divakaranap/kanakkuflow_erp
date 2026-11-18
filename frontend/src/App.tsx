@@ -24,6 +24,7 @@ import { SalesOverview } from './features/sales/SalesOverview'
 import { DispatchOverview } from './features/dispatch/DispatchOverview'
 import { PaymentOverview } from './features/payments/PaymentOverview'
 import { AccountingOverview } from './features/accounting/AccountingOverview'
+import { ExecutiveDashboard } from './features/dashboard/ExecutiveDashboard'
 import type { UserInfo, UserRole } from './types/auth'
 
 export function App() {
@@ -33,7 +34,7 @@ export function App() {
   const [loading, setLoading] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
   const [healthStatus, setHealthStatus] = useState<{ status: string; database?: string } | null>(null)
-  const [currentView, setCurrentView] = useState<'dashboard' | 'masters' | 'inventory' | 'production' | 'sales' | 'dispatch' | 'payments' | 'accounting'>('sales')
+  const [currentView, setCurrentView] = useState<'dashboard' | 'masters' | 'inventory' | 'production' | 'sales' | 'dispatch' | 'payments' | 'accounting'>('dashboard')
 
   useEffect(() => {
     // Check backend health
@@ -116,8 +117,8 @@ export function App() {
           <div>
             <div className="flex items-center space-x-2">
               <span className="text-xl font-bold tracking-tight text-[#172033]">FACTORYFLOW</span>
-              <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
-                Phase 4: BOM & Production
+              <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                Order-to-Audit ERP
               </span>
             </div>
             <p className="text-xs text-[#64748B]">From Order to Production. From Stock to Audit.</p>
@@ -125,7 +126,18 @@ export function App() {
         </div>
 
         {currentUser && (
-          <div className="flex items-center space-x-2 bg-slate-100 p-1 rounded-lg border border-[#E2E8F0]">
+          <div className="flex items-center space-x-2 bg-slate-100 p-1 rounded-lg border border-[#E2E8F0] overflow-x-auto">
+            <button
+              onClick={() => setCurrentView('dashboard')}
+              className={`px-3 py-1.5 rounded-md text-xs font-semibold transition flex items-center space-x-1.5 ${
+                currentView === 'dashboard'
+                  ? 'bg-white text-blue-600 shadow-sm'
+                  : 'text-[#64748B] hover:text-[#172033]'
+              }`}
+            >
+              <LayoutDashboard className="h-3.5 w-3.5" />
+              <span>Dashboard &amp; Reports</span>
+            </button>
             <button
               onClick={() => setCurrentView('sales')}
               className={`px-3 py-1.5 rounded-md text-xs font-semibold transition flex items-center space-x-1.5 ${
@@ -203,17 +215,6 @@ export function App() {
               <Database className="h-3.5 w-3.5" />
               <span>Master Data</span>
             </button>
-            <button
-              onClick={() => setCurrentView('dashboard')}
-              className={`px-3 py-1.5 rounded-md text-xs font-semibold transition flex items-center space-x-1.5 ${
-                currentView === 'dashboard'
-                  ? 'bg-white text-blue-600 shadow-sm'
-                  : 'text-[#64748B] hover:text-[#172033]'
-              }`}
-            >
-              <LayoutDashboard className="h-3.5 w-3.5" />
-              <span>Session Overview</span>
-            </button>
           </div>
         )}
 
@@ -257,7 +258,9 @@ export function App() {
       {/* Main Body */}
       <main className="flex-1 max-w-7xl w-full mx-auto p-6 flex flex-col justify-start">
         {currentUser ? (
-          currentView === 'accounting' ? (
+          currentView === 'dashboard' ? (
+            <ExecutiveDashboard />
+          ) : currentView === 'accounting' ? (
             <AccountingOverview />
           ) : currentView === 'payments' ? (
             <PaymentOverview />
