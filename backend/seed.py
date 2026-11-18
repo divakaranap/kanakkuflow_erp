@@ -439,6 +439,60 @@ def seed_phase3_inventory(db: Session) -> None:
     print("-> Phase 3 Opening Stock seeded successfully.")
 
 
+def seed_phase4_bom(db: Session) -> None:
+    print("-> Seeding Phase 4 Benchmark Recipe BOM (Murukku 200 g)...")
+    from backend.app.models.bom import BOM, BOMItem, BOMStatus
+    from backend.app.models.inventory import InventoryItemType
+
+    admin = db.query(User).filter(User.username == "admin").first()
+    admin_id = admin.id if admin else 1
+
+    murukku = db.query(Product).filter(Product.sku == "MUR-200").first()
+    if not murukku:
+        print("   [!] Product MUR-200 not found, skipping BOM seed.")
+        return
+
+    existing_bom = db.query(BOM).filter(
+        BOM.product_id == murukku.id,
+        BOM.version == 1,
+    ).first()
+
+    if not existing_bom:
+        # Resolve item IDs
+        flour = db.query(RawMaterial).filter(RawMaterial.material_code == "RAW-FLOUR-01").first()
+        oil = db.query(RawMaterial).filter(RawMaterial.material_code == "RAW-OIL-01").first()
+        spice = db.query(RawMaterial).filter(RawMaterial.material_code == "RAW-SPICE-01").first()
+        pouch = db.query(PackagingItem).filter(PackagingItem.packaging_code == "PKG-POUCH-01").first()
+        carton = db.query(PackagingItem).filter(PackagingItem.packaging_code == "PKG-BOX-01").first()
+
+        if not all([flour, oil, spice, pouch, carton]):
+            print("   [!] Missing prerequisite master items for BOM.")
+            return
+
+        bom = BOM(
+            bom_code="BOM-MUR-200-V1",
+            product_id=murukku.id,
+            version=1,
+            batch_yield_packets=Decimal("200.0000"),
+            tolerance_pct=Decimal("3.00"),
+            description="Benchmark Standard Recipe for Murukku 200g (Batch yield: 200 packets)",
+            status=BOMStatus.ACTIVE,
+            created_by=admin_id,
+            items=[
+                BOMItem(item_type=InventoryItemType.RAW, item_id=flour.id, quantity_per_batch=Decimal("40.0000"), unit="kg"),
+                BOMItem(item_type=InventoryItemType.RAW, item_id=oil.id, quantity_per_batch=Decimal("10.0000"), unit="litre"),
+                BOMItem(item_type=InventoryItemType.RAW, item_id=spice.id, quantity_per_batch=Decimal("1.2000"), unit="kg"),
+                BOMItem(item_type=InventoryItemType.PACKAGING, item_id=pouch.id, quantity_per_batch=Decimal("200.0000"), unit="piece"),
+                BOMItem(item_type=InventoryItemType.PACKAGING, item_id=carton.id, quantity_per_batch=Decimal("10.0000"), unit="piece"),
+            ],
+        )
+        db.add(bom)
+        db.commit()
+        print("   [+] Created active Benchmark BOM: BOM-MUR-200-V1")
+    else:
+        print("   [*] Benchmark BOM already exists for MUR-200")
+
+
 def run_seed():
     Base.metadata.create_all(bind=engine)
     db = SessionLocal()
@@ -446,6 +500,7 @@ def run_seed():
         seed_users(db)
         seed_master_data(db)
         seed_phase3_inventory(db)
+        seed_phase4_bom(db)
     finally:
         db.close()
 

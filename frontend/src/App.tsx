@@ -15,6 +15,7 @@ import { authService } from './services/authService'
 import { api } from './services/api'
 import { MasterDataOverview } from './features/masters/MasterDataOverview'
 import { InventoryOverview } from './features/inventory/InventoryOverview'
+import { ProductionOverview } from './features/production/ProductionOverview'
 import type { UserInfo, UserRole } from './types/auth'
 
 export function App() {
@@ -24,7 +25,7 @@ export function App() {
   const [loading, setLoading] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
   const [healthStatus, setHealthStatus] = useState<{ status: string; database?: string } | null>(null)
-  const [currentView, setCurrentView] = useState<'dashboard' | 'masters' | 'inventory'>('inventory')
+  const [currentView, setCurrentView] = useState<'dashboard' | 'masters' | 'inventory' | 'production'>('production')
 
   useEffect(() => {
     // Check backend health
@@ -108,7 +109,7 @@ export function App() {
             <div className="flex items-center space-x-2">
               <span className="text-xl font-bold tracking-tight text-[#172033]">FACTORYFLOW</span>
               <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
-                Phase 3: Inventory & Purchases
+                Phase 4: BOM & Production
               </span>
             </div>
             <p className="text-xs text-[#64748B]">From Order to Production. From Stock to Audit.</p>
@@ -117,6 +118,17 @@ export function App() {
 
         {currentUser && (
           <div className="flex items-center space-x-2 bg-slate-100 p-1 rounded-lg border border-[#E2E8F0]">
+            <button
+              onClick={() => setCurrentView('production')}
+              className={`px-3 py-1.5 rounded-md text-xs font-semibold transition flex items-center space-x-1.5 ${
+                currentView === 'production'
+                  ? 'bg-white text-blue-600 shadow-sm'
+                  : 'text-[#64748B] hover:text-[#172033]'
+              }`}
+            >
+              <Factory className="h-3.5 w-3.5" />
+              <span>Production & BOM</span>
+            </button>
             <button
               onClick={() => setCurrentView('inventory')}
               className={`px-3 py-1.5 rounded-md text-xs font-semibold transition flex items-center space-x-1.5 ${
@@ -193,7 +205,9 @@ export function App() {
       {/* Main Body */}
       <main className="flex-1 max-w-7xl w-full mx-auto p-6 flex flex-col justify-start">
         {currentUser ? (
-          currentView === 'inventory' ? (
+          currentView === 'production' ? (
+            <ProductionOverview />
+          ) : currentView === 'inventory' ? (
             <InventoryOverview />
           ) : currentView === 'masters' ? (
             <MasterDataOverview />

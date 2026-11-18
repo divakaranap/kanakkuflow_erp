@@ -34,6 +34,27 @@ from backend.app.schemas.purchase import (
     PurchaseUpdate,
     PurchaseOut,
 )
+from backend.app.schemas.bom import (
+    BOMItemCreate,
+    BOMItemOut,
+    BOMCreate,
+    BOMUpdate,
+    BOMOut,
+    BOMPlannedItem,
+    BOMScalingResponse,
+)
+from backend.app.schemas.production import (
+    ProductionRunMaterialCreate,
+    ProductionRunOverheadCreate,
+    ProductionRunCreate,
+    ProductionRunUpdate,
+    ProductionRunMaterialOut,
+    ProductionRunOverheadOut,
+    ProductionRunOut,
+    VarianceItem,
+    ProductionVarianceReport,
+    ProductionCostingReport,
+)
 
 __all__ = [
     "LoginRequest",
@@ -90,4 +111,21 @@ __all__ = [
     "PurchaseCreate",
     "PurchaseUpdate",
     "PurchaseOut",
+    "BOMItemCreate",
+    "BOMItemOut",
+    "BOMCreate",
+    "BOMUpdate",
+    "BOMOut",
+    "BOMPlannedItem",
+    "BOMScalingResponse",
+    "ProductionRunMaterialCreate",
+    "ProductionRunOverheadCreate",
+    "ProductionRunCreate",
+    "ProductionRunUpdate",
+    "ProductionRunMaterialOut",
+    "ProductionRunOverheadOut",
+    "ProductionRunOut",
+    "VarianceItem",
+    "ProductionVarianceReport",
+    "ProductionCostingReport",
 ]

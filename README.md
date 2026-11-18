@@ -72,3 +72,29 @@ npm run dev
 - **Stock Ledger**: Immutable transaction ledger (`stock_movements`). Balances are always computed from `SUM(qty_delta)`.
 - **Traceability**: Every stock delta must be tied to a source document ID.
 - **Atomic Operations**: Invoicing, production posting, and stock movements are wrapped inside atomic transactions with zero negative stock violations.
+
+---
+
+## 6. Phase 4 – Production Engine, BOM & Costing API
+
+### Key REST Endpoints
+- `GET /api/boms` - List BOM recipes with status filtering
+- `POST /api/boms` - Create recipe BOM with versioning
+- `GET /api/boms/active/{product_id}` - Fetch active production recipe
+- `POST /api/boms/{id}/activate` - Activate recipe (archives existing active recipe)
+- `POST /api/boms/{id}/scale?batch_count=N` - Dynamically scale BOM recipe requirements
+- `GET /api/production` - List production runs with yield and variance statuses
+- `POST /api/production` - Create guided production run with BOM snapshot
+- `GET /api/production/{id}` - Get full production run details
+- `POST /api/production/{id}/post` - Atomically post production run (updates stock ledger & balances)
+- `GET /api/production/{id}/variance` - Detailed yield and material consumption variance report
+- `GET /api/production/{id}/costing` - Production costing report with moving weighted-average line valuation
+- `GET /api/production/summary` - Aggregate production KPIs and variance alert counters
+
+### Automated Test Coverage
+- **Backend**: 37 automated tests passing in `backend/app/tests/`
+  - BOM CRUD and activation lifecycle (`test_boms.py`)
+  - Production run draft and posting lifecycle (`test_production.py`)
+  - Murukku 200g benchmark integration test (`test_production_costing_and_variance.py`)
+- **Frontend**: 10 Vitest tests passing in `frontend/src/tests/`
+  - BOM and Production Run type contracts (`production.test.ts`)

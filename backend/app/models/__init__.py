@@ -21,6 +21,19 @@ from backend.app.models.purchase import (
     PurchaseStatus,
     PurchaseItemType,
 )
+from backend.app.models.bom import (
+    BOM,
+    BOMItem,
+    BOMStatus,
+)
+from backend.app.models.production import (
+    ProductionRun,
+    ProductionRunMaterial,
+    ProductionRunOverhead,
+    ProductionRunStatus,
+    OverheadExpenseType,
+    VarianceStatus,
+)
 
 __all__ = [
     "Base",
@@ -50,4 +63,13 @@ __all__ = [
     "PurchaseLine",
     "PurchaseStatus",
     "PurchaseItemType",
+    "BOM",
+    "BOMItem",
+    "BOMStatus",
+    "ProductionRun",
+    "ProductionRunMaterial",
+    "ProductionRunOverhead",
+    "ProductionRunStatus",
+    "OverheadExpenseType",
+    "VarianceStatus",
 ]
