@@ -12,10 +12,12 @@ import {
   Eye,
   Check,
   Ban,
+  Smartphone,
 } from 'lucide-react'
 import { salesService } from '../../services/salesService'
 import { masterService } from '../../services/masterService'
 import { formatINR } from '../../lib/utils'
+import { MobileSalesOrder } from './MobileSalesOrder'
 import type {
   SalesOrder,
   SalesInvoice,
@@ -24,7 +26,7 @@ import type {
 import type { Customer, Product } from '../../types/masters'
 
 export function SalesOverview() {
-  const [activeTab, setActiveTab] = useState<'orders' | 'new-order' | 'invoices' | 'invoice-preview'>('orders')
+  const [activeTab, setActiveTab] = useState<'orders' | 'new-order' | 'invoices' | 'invoice-preview' | 'mobile-order'>('orders')
   const [loading, setLoading] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
   const [successMsg, setSuccessMsg] = useState('')
@@ -352,6 +354,16 @@ export function SalesOverview() {
               <span>Invoice Preview</span>
             </button>
           )}
+
+          <button
+            onClick={() => setActiveTab('mobile-order')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1.5 transition ${
+              activeTab === 'mobile-order' ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'
+            }`}
+          >
+            <Smartphone className="h-4 w-4" />
+            <span>Mobile Offline Booking</span>
+          </button>
         </div>
 
         <button
@@ -905,6 +917,9 @@ export function SalesOverview() {
           </div>
         </div>
       )}
+
+      {/* TAB 4: MOBILE OFFLINE BOOKING */}
+      {activeTab === 'mobile-order' && <MobileSalesOrder />}
 
       {/* Cancellation Modal */}
       {isCancelModalOpen && (
