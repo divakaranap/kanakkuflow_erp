@@ -1,3 +1,4 @@
+import os
 import pytest
 from typing import Generator
 from fastapi.testclient import TestClient
@@ -5,14 +6,21 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
 from sqlalchemy.pool import StaticPool
 
+# Ensure test DB is SQLite in-memory before config is initialized
+os.environ["DATABASE_URL"] = "sqlite:///:memory:"
+
 from backend.app.config import settings
+settings.DATABASE_URL = "sqlite:///:memory:"
+
 from backend.app.database import get_db
 from backend.app.main import app
 from backend.app.models.base import Base
 from backend.app.models.user import User, UserRole
 from backend.app.services.auth_service import get_password_hash
 
-# Use isolated SQLite in-memory database for tests
+# Pre-compute demo password hash once for rapid testing
+DEMO_PASSWORD_HASH = get_password_hash("demo123")
+
 SQLALCHEMY_DATABASE_URL = "sqlite:///:memory:"
 
 engine_test = create_engine(
@@ -68,7 +76,7 @@ def seeded_users(db: Session) -> dict:
             email="owner@kanakkuflow.com",
             full_name="Owner User",
             role=UserRole.OWNER,
-            hashed_password=get_password_hash("demo123"),
+            hashed_password=DEMO_PASSWORD_HASH,
             is_active=True,
         ),
         "admin": User(
@@ -76,7 +84,7 @@ def seeded_users(db: Session) -> dict:
             email="admin@kanakkuflow.com",
             full_name="Admin User",
             role=UserRole.ADMIN,
-            hashed_password=get_password_hash("demo123"),
+            hashed_password=DEMO_PASSWORD_HASH,
             is_active=True,
         ),
         "salesA": User(
@@ -84,7 +92,7 @@ def seeded_users(db: Session) -> dict:
             email="salesa@kanakkuflow.com",
             full_name="Sales User A",
             role=UserRole.SALESMAN,
-            hashed_password=get_password_hash("demo123"),
+            hashed_password=DEMO_PASSWORD_HASH,
             is_active=True,
         ),
         "prod": User(
@@ -92,7 +100,7 @@ def seeded_users(db: Session) -> dict:
             email="prod@kanakkuflow.com",
             full_name="Production User",
             role=UserRole.PRODUCTION,
-            hashed_password=get_password_hash("demo123"),
+            hashed_password=DEMO_PASSWORD_HASH,
             is_active=True,
         ),
         "auditor": User(
@@ -100,7 +108,7 @@ def seeded_users(db: Session) -> dict:
             email="auditor@kanakkuflow.com",
             full_name="Auditor User",
             role=UserRole.AUDITOR,
-            hashed_password=get_password_hash("demo123"),
+            hashed_password=DEMO_PASSWORD_HASH,
             is_active=True,
         ),
     }

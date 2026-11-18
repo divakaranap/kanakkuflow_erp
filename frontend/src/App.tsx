@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import {
-  ShieldCheck,
   Factory,
   LogOut,
   Server,
@@ -8,9 +7,12 @@ import {
   CheckCircle2,
   AlertCircle,
   KeyRound,
+  Database,
+  LayoutDashboard,
 } from 'lucide-react'
 import { authService } from './services/authService'
 import { api } from './services/api'
+import { MasterDataOverview } from './features/masters/MasterDataOverview'
 import type { UserInfo, UserRole } from './types/auth'
 
 export function App() {
@@ -20,6 +22,7 @@ export function App() {
   const [loading, setLoading] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
   const [healthStatus, setHealthStatus] = useState<{ status: string; database?: string } | null>(null)
+  const [currentView, setCurrentView] = useState<'dashboard' | 'masters'>('masters')
 
   useEffect(() => {
     // Check backend health
@@ -94,8 +97,8 @@ export function App() {
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-[#172033] flex flex-col font-sans">
       {/* Top Navbar */}
-      <header className="bg-white border-b border-[#E2E8F0] px-6 py-4 flex items-center justify-between sticky top-0 z-50 shadow-sm">
-        <div className="flex items-center space-x-3">
+      <header className="bg-white border-b border-[#E2E8F0] px-6 py-3.5 flex items-center justify-between sticky top-0 z-50 shadow-sm">
+        <div className="flex items-center space-x-4">
           <div className="h-10 w-10 rounded-lg bg-blue-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20">
             <Factory className="h-6 w-6" />
           </div>
@@ -103,12 +106,39 @@ export function App() {
             <div className="flex items-center space-x-2">
               <span className="text-xl font-bold tracking-tight text-[#172033]">FACTORYFLOW</span>
               <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
-                Phase 1 Scaffolding
+                Phase 2: Master Data
               </span>
             </div>
             <p className="text-xs text-[#64748B]">From Order to Production. From Stock to Audit.</p>
           </div>
         </div>
+
+        {currentUser && (
+          <div className="flex items-center space-x-2 bg-slate-100 p-1 rounded-lg border border-[#E2E8F0]">
+            <button
+              onClick={() => setCurrentView('masters')}
+              className={`px-3 py-1.5 rounded-md text-xs font-semibold transition flex items-center space-x-1.5 ${
+                currentView === 'masters'
+                  ? 'bg-white text-blue-600 shadow-sm'
+                  : 'text-[#64748B] hover:text-[#172033]'
+              }`}
+            >
+              <Database className="h-3.5 w-3.5" />
+              <span>Master Data</span>
+            </button>
+            <button
+              onClick={() => setCurrentView('dashboard')}
+              className={`px-3 py-1.5 rounded-md text-xs font-semibold transition flex items-center space-x-1.5 ${
+                currentView === 'dashboard'
+                  ? 'bg-white text-blue-600 shadow-sm'
+                  : 'text-[#64748B] hover:text-[#172033]'
+              }`}
+            >
+              <LayoutDashboard className="h-3.5 w-3.5" />
+              <span>Session Overview</span>
+            </button>
+          </div>
+        )}
 
         <div className="flex items-center space-x-4">
           <div className="flex items-center space-x-2 text-xs bg-slate-50 px-3 py-1.5 rounded-md border border-[#E2E8F0]">
@@ -117,7 +147,7 @@ export function App() {
             {healthStatus?.status === 'ok' ? (
               <span className="flex items-center text-emerald-600 font-semibold">
                 <span className="h-2 w-2 rounded-full bg-emerald-500 mr-1.5 animate-pulse"></span>
-                Connected (DB: {healthStatus.database})
+                Connected
               </span>
             ) : (
               <span className="flex items-center text-amber-600 font-semibold">
@@ -148,63 +178,47 @@ export function App() {
       </header>
 
       {/* Main Body */}
-      <main className="flex-1 max-w-6xl w-full mx-auto p-6 flex flex-col justify-center">
+      <main className="flex-1 max-w-7xl w-full mx-auto p-6 flex flex-col justify-start">
         {currentUser ? (
-          <div className="bg-white rounded-xl border border-[#E2E8F0] shadow-sm p-8 space-y-6">
-            <div className="flex items-start justify-between border-b border-[#E2E8F0] pb-6">
-              <div className="space-y-1">
-                <div className="flex items-center space-x-2">
-                  <CheckCircle2 className="h-6 w-6 text-emerald-600" />
-                  <h2 className="text-2xl font-bold text-[#172033]">Welcome, {currentUser.full_name}</h2>
+          currentView === 'masters' ? (
+            <MasterDataOverview />
+          ) : (
+            <div className="bg-white rounded-xl border border-[#E2E8F0] shadow-sm p-8 space-y-6">
+              <div className="flex items-start justify-between border-b border-[#E2E8F0] pb-6">
+                <div className="space-y-1">
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle2 className="h-6 w-6 text-emerald-600" />
+                    <h2 className="text-2xl font-bold text-[#172033]">User Profile: {currentUser.full_name}</h2>
+                  </div>
+                  <p className="text-sm text-[#64748B]">
+                    Active ERP session with role <span className="font-semibold text-blue-600">{currentUser.role}</span>.
+                  </p>
                 </div>
-                <p className="text-sm text-[#64748B]">
-                  Authenticated session active with role <span className="font-semibold text-blue-600">{currentUser.role}</span>.
-                </p>
+                <span className={`text-xs px-3 py-1 font-semibold rounded-full border ${roleBadgeColor(currentUser.role)}`}>
+                  Role: {currentUser.role}
+                </span>
               </div>
-              <span className={`text-xs px-3 py-1 font-semibold rounded-full border ${roleBadgeColor(currentUser.role)}`}>
-                Role: {currentUser.role}
-              </span>
-            </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="p-4 bg-slate-50 rounded-lg border border-[#E2E8F0] space-y-1">
-                <span className="text-xs font-medium text-[#64748B]">Username</span>
-                <p className="text-sm font-semibold text-[#172033]">{currentUser.username}</p>
-              </div>
-              <div className="p-4 bg-slate-50 rounded-lg border border-[#E2E8F0] space-y-1">
-                <span className="text-xs font-medium text-[#64748B]">Email Address</span>
-                <p className="text-sm font-semibold text-[#172033]">{currentUser.email}</p>
-              </div>
-              <div className="p-4 bg-slate-50 rounded-lg border border-[#E2E8F0] space-y-1">
-                <span className="text-xs font-medium text-[#64748B]">Account Status</span>
-                <p className="text-sm font-semibold text-emerald-600 flex items-center">
-                  <span className="h-2 w-2 rounded-full bg-emerald-500 mr-1.5"></span> Active
-                </p>
-              </div>
-            </div>
-
-            <div className="p-5 bg-blue-50/50 rounded-xl border border-blue-100 flex items-start space-x-3">
-              <ShieldCheck className="h-6 w-6 text-blue-600 flex-shrink-0 mt-0.5" />
-              <div className="text-sm text-blue-900 space-y-1">
-                <p className="font-semibold">Phase 1 Architecture Verification Successful</p>
-                <p className="text-blue-800/80 leading-relaxed">
-                  FastAPI backend, PostgreSQL models, Alembic migrations, Docker Compose configuration,
-                  and JWT authentication with role-based access control (RBAC) are verified.
-                </p>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="p-4 bg-slate-50 rounded-lg border border-[#E2E8F0] space-y-1">
+                  <span className="text-xs font-medium text-[#64748B]">Username</span>
+                  <p className="text-sm font-semibold text-[#172033]">{currentUser.username}</p>
+                </div>
+                <div className="p-4 bg-slate-50 rounded-lg border border-[#E2E8F0] space-y-1">
+                  <span className="text-xs font-medium text-[#64748B]">Email Address</span>
+                  <p className="text-sm font-semibold text-[#172033]">{currentUser.email}</p>
+                </div>
+                <div className="p-4 bg-slate-50 rounded-lg border border-[#E2E8F0] space-y-1">
+                  <span className="text-xs font-medium text-[#64748B]">Account Status</span>
+                  <p className="text-sm font-semibold text-emerald-600 flex items-center">
+                    <span className="h-2 w-2 rounded-full bg-emerald-500 mr-1.5"></span> Active
+                  </p>
+                </div>
               </div>
             </div>
-
-            <div className="flex justify-end pt-4">
-              <button
-                onClick={handleLogout}
-                className="px-4 py-2 text-sm font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition"
-              >
-                Log Out
-              </button>
-            </div>
-          </div>
+          )
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center my-auto">
             {/* Left Column: Context & Overview */}
             <div className="lg:col-span-7 space-y-6">
               <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-semibold">
@@ -212,26 +226,26 @@ export function App() {
                 <span>Centre for Digital Infrastructure – NIT Tiruchirappalli</span>
               </div>
               <h1 className="text-4xl font-extrabold tracking-tight text-[#172033] leading-tight">
-                Order-to-Audit Management for Food Manufacturing
+                Master Data Management &amp; High-Precision Unit Engine
               </h1>
               <p className="text-base text-[#64748B] leading-relaxed">
-                FACTORYFLOW connects the entire food manufacturing lifecycle: from Salesman order placement,
-                production batch allocation, Bill of Materials (BOM) yield calculation, GST invoicing, and real-time
-                ledger-based inventory to monthly auditor reports.
+                Phase 2 provides core Master Data architectures: Customers (Retailers &amp; Wholesalers),
+                Suppliers, Finished Goods Catalog (Murukku 200g @ ₹50), Raw Materials (Flour, Oil, Spices),
+                Packaging Items, Tiered Price Lists, and a high-precision Decimal Unit Conversion Engine.
               </p>
 
               <div className="grid grid-cols-3 gap-4 pt-2">
                 <div className="p-4 bg-white rounded-lg border border-[#E2E8F0] shadow-sm">
-                  <div className="text-blue-600 font-bold text-lg">5 Roles</div>
-                  <div className="text-xs text-[#64748B] mt-0.5">Owner, Admin, Sales, Production, Auditor</div>
+                  <div className="text-blue-600 font-bold text-lg">6 Modules</div>
+                  <div className="text-xs text-[#64748B] mt-0.5">Customers, Suppliers, Products, RM, Pkg, Price Lists</div>
                 </div>
                 <div className="p-4 bg-white rounded-lg border border-[#E2E8F0] shadow-sm">
-                  <div className="text-emerald-600 font-bold text-lg">Paise Engine</div>
-                  <div className="text-xs text-[#64748B] mt-0.5">Exact integer calculations &amp; INR formatting</div>
+                  <div className="text-emerald-600 font-bold text-lg">Unit Engine</div>
+                  <div className="text-xs text-[#64748B] mt-0.5">Decimal math: g ↔ kg, ml ↔ L, pkt ↔ carton</div>
                 </div>
                 <div className="p-4 bg-white rounded-lg border border-[#E2E8F0] shadow-sm">
-                  <div className="text-purple-600 font-bold text-lg">Ledger Based</div>
-                  <div className="text-xs text-[#64748B] mt-0.5">Immutable audit trail &amp; zero silent overwrites</div>
+                  <div className="text-purple-600 font-bold text-lg">Price Resolver</div>
+                  <div className="text-xs text-[#64748B] mt-0.5">Customer &rarr; Tier &rarr; Product fallback hierarchy</div>
                 </div>
               </div>
             </div>
@@ -319,7 +333,7 @@ export function App() {
 
       {/* Footer */}
       <footer className="bg-white border-t border-[#E2E8F0] py-3 px-6 text-center text-xs text-[#64748B]">
-        FACTORYFLOW ERP System &bull; Phase 1 Architecture Verification &bull; Centre for Digital Infrastructure, NIT Tiruchirappalli
+        FACTORYFLOW ERP System &bull; Phase 2 Master Data &amp; Unit Conversion Engine &bull; Centre for Digital Infrastructure, NIT Tiruchirappalli
       </footer>
     </div>
   )

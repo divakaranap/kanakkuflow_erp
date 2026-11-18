@@ -1,4 +1,27 @@
 from backend.app.models.base import Base, TimestampMixin
 from backend.app.models.user import User, UserRole
+from backend.app.models.customer import Customer, CustomerType
+from backend.app.models.supplier import Supplier
+from backend.app.models.product import Product, ProductCategory
+from backend.app.models.raw_material import RawMaterial, RawMaterialCategory
+from backend.app.models.packaging import PackagingItem, PackagingCategory
+from backend.app.models.price_list import PriceList, PriceListItem, PriceListCustomerType
 
-__all__ = ["Base", "TimestampMixin", "User", "UserRole"]
+__all__ = [
+    "Base",
+    "TimestampMixin",
+    "User",
+    "UserRole",
+    "Customer",
+    "CustomerType",
+    "Supplier",
+    "Product",
+    "ProductCategory",
+    "RawMaterial",
+    "RawMaterialCategory",
+    "PackagingItem",
+    "PackagingCategory",
+    "PriceList",
+    "PriceListItem",
+    "PriceListCustomerType",
+]
