@@ -1,3 +1,5 @@
+import os
+from pathlib import Path
 from typing import List, Optional, Any
 from pydantic import Field, AliasChoices, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -73,6 +75,33 @@ class Settings(BaseSettings):
             elif url.startswith("postgres://"):
                 return url.replace("postgres://", "postgresql+psycopg://", 1)
             return url
+
+        # When running in serverless environments (e.g. Vercel) or when external DB is not configured,
+        # fallback to the pre-seeded SQLite database so demo logins & ERP features function out of the box.
+        is_serverless = os.environ.get("VERCEL") == "1" or os.environ.get("AWS_LAMBDA_FUNCTION_NAME") is not None
+        seed_db = Path(__file__).resolve().parent / "seed_data.db"
+
+        if is_serverless:
+            import tempfile
+            import shutil
+            tmp_db = Path(tempfile.gettempdir()) / "kanakkuflow.db"
+            if not tmp_db.exists() and seed_db.exists():
+                try:
+                    shutil.copyfile(seed_db, tmp_db)
+                except Exception:
+                    pass
+            if tmp_db.exists():
+                return f"sqlite:///{tmp_db.as_posix()}"
+            if seed_db.exists():
+                return f"sqlite:///{seed_db.as_posix()}"
+
+        # Local development SQLite fallback if available
+        local_db = Path.cwd() / "kanakkuflow.db"
+        if local_db.exists():
+            return f"sqlite:///{local_db.as_posix()}"
+        if seed_db.exists():
+            return f"sqlite:///{seed_db.as_posix()}"
+
         return (
             f"postgresql+psycopg://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@"
             f"{self.POSTGRES_SERVER}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"

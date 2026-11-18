@@ -27,6 +27,7 @@ frontend/dist-ssr/
 postgres_data/
 *.sqlite3
 *.db
+!backend/app/seed_data.db
 
 # OS
 .DS_Store
