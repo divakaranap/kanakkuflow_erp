@@ -11,6 +11,7 @@ import {
   LayoutDashboard,
   Boxes,
   ShoppingCart,
+  Truck,
 } from 'lucide-react'
 import { authService } from './services/authService'
 import { api } from './services/api'
@@ -18,6 +19,7 @@ import { MasterDataOverview } from './features/masters/MasterDataOverview'
 import { InventoryOverview } from './features/inventory/InventoryOverview'
 import { ProductionOverview } from './features/production/ProductionOverview'
 import { SalesOverview } from './features/sales/SalesOverview'
+import { DispatchOverview } from './features/dispatch/DispatchOverview'
 import type { UserInfo, UserRole } from './types/auth'
 
 export function App() {
@@ -27,7 +29,7 @@ export function App() {
   const [loading, setLoading] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
   const [healthStatus, setHealthStatus] = useState<{ status: string; database?: string } | null>(null)
-  const [currentView, setCurrentView] = useState<'dashboard' | 'masters' | 'inventory' | 'production' | 'sales'>('sales')
+  const [currentView, setCurrentView] = useState<'dashboard' | 'masters' | 'inventory' | 'production' | 'sales' | 'dispatch'>('sales')
 
   useEffect(() => {
     // Check backend health
@@ -132,6 +134,17 @@ export function App() {
               <span>Sales &amp; Invoices</span>
             </button>
             <button
+              onClick={() => setCurrentView('dispatch')}
+              className={`px-3 py-1.5 rounded-md text-xs font-semibold transition flex items-center space-x-1.5 ${
+                currentView === 'dispatch'
+                  ? 'bg-white text-blue-600 shadow-sm'
+                  : 'text-[#64748B] hover:text-[#172033]'
+              }`}
+            >
+              <Truck className="h-3.5 w-3.5" />
+              <span>Dispatch &amp; Stock Out</span>
+            </button>
+            <button
               onClick={() => setCurrentView('production')}
               className={`px-3 py-1.5 rounded-md text-xs font-semibold transition flex items-center space-x-1.5 ${
                 currentView === 'production'
@@ -218,7 +231,9 @@ export function App() {
       {/* Main Body */}
       <main className="flex-1 max-w-7xl w-full mx-auto p-6 flex flex-col justify-start">
         {currentUser ? (
-          currentView === 'sales' ? (
+          currentView === 'dispatch' ? (
+            <DispatchOverview />
+          ) : currentView === 'sales' ? (
             <SalesOverview />
           ) : currentView === 'production' ? (
             <ProductionOverview />

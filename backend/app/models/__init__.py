@@ -42,6 +42,11 @@ from backend.app.models.sales import (
     SalesOrderStatus,
     InvoiceStatus,
 )
+from backend.app.models.dispatch import (
+    Dispatch,
+    DispatchItem,
+    DispatchStatus,
+)
 
 __all__ = [
     "Base",
@@ -86,4 +91,7 @@ __all__ = [
     "SalesInvoiceItem",
     "SalesOrderStatus",
     "InvoiceStatus",
+    "Dispatch",
+    "DispatchItem",
+    "DispatchStatus",
 ]

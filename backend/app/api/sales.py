@@ -18,10 +18,20 @@ from backend.app.schemas.sales import (
     InvoiceCancelRequest,
     ProductStockCheckResponse,
 )
-from backend.app.services import sales_service
+from backend.app.services import sales_service, dispatch_service
 from backend.app.services.pdf_service import generate_invoice_pdf_buffer
 
 router = APIRouter(prefix="/sales", tags=["Sales Orders & GST Invoicing"])
+
+
+@router.get("/orders/{order_id}/dispatch-status")
+def get_order_dispatch_status_route(
+    order_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Retrieve fulfillment and stock availability status for order dispatch."""
+    return dispatch_service.get_order_dispatch_status(db, order_id)
 
 
 # -------------------------------------------------------------
