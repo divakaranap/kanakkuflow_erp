@@ -46,11 +46,11 @@ def get_dashboard_analytics_summary(db: Session) -> Dict[str, Any]:
 
     # 2. Manufacturing & Yield KPIs
     runs = db.query(ProductionRun).filter(ProductionRun.status == ProductionRunStatus.POSTED).all()
-    total_packets_produced = sum(float(r.actual_yield_quantity or 0) for r in runs)
+    total_packets_produced = sum(float(r.actual_good_output or 0) for r in runs)
     
     # Calculate weighted average yield variance %
-    tot_planned_yield = sum(float(r.planned_yield_quantity or 0) for r in runs)
-    tot_actual_yield = sum(float(r.actual_yield_quantity or 0) for r in runs)
+    tot_planned_yield = sum(float(r.expected_output or 0) for r in runs)
+    tot_actual_yield = sum(float(r.actual_good_output or 0) for r in runs)
     avg_yield_variance_pct = (
         ((tot_actual_yield - tot_planned_yield) / tot_planned_yield * 100)
         if tot_planned_yield > 0
@@ -406,16 +406,17 @@ def build_production_yield_report(db: Session) -> Tuple[List[str], List[List[Any
     rows = []
     for r in runs:
         prd = r.product
-        planned = float(r.planned_yield_quantity or 0)
-        actual = float(r.actual_yield_quantity or 0)
-        var_qty = float(r.variance_quantity or (actual - planned))
-        var_pct = float(r.variance_percentage or (((actual - planned) / planned * 100) if planned > 0 else 0))
+        planned = float(r.expected_output or 0)
+        actual = float(r.actual_good_output or 0)
+        var_qty = actual - planned
+        var_pct = float(r.yield_variance_pct) if r.yield_variance_pct is not None else (((actual - planned) / planned * 100) if planned > 0 else 0)
         tot_cost_rs = (r.total_production_cost_paise / 100) if r.total_production_cost_paise else 0
-        unit_cost_rs = (r.cost_per_unit_paise / 100) if r.cost_per_unit_paise else (tot_cost_rs / actual if actual > 0 else 0)
+        unit_cost_rs = (r.actual_unit_cost / 100) if r.actual_unit_cost else (tot_cost_rs / actual if actual > 0 else 0)
+        dt_str = str(r.production_date.date() if hasattr(r.production_date, "date") else r.created_at.date() if hasattr(r.created_at, "date") else "-")
 
         rows.append([
             r.run_number,
-            str(r.run_date or "-"),
+            dt_str,
             prd.product_name if prd else "Product",
             f"{planned:.0f} pkts",
             f"{actual:.0f} pkts",
