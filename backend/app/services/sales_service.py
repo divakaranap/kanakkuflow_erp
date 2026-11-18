@@ -18,6 +18,7 @@ from backend.app.models.sales import (
     SalesOrderStatus,
     InvoiceStatus,
 )
+from backend.app.models.payment import CustomerLedgerEntry
 from backend.app.schemas.sales import (
     SalesOrderCreate,
     SalesOrderUpdate,
@@ -462,6 +463,27 @@ def create_and_post_sales_invoice(
             line_total_paise=item.line_total_paise,
         )
         db.add(inv_item)
+
+    # Post debit entry to customer ledger
+    current_bal = (
+        db.query(func.coalesce(func.sum(CustomerLedgerEntry.debit_paise - CustomerLedgerEntry.credit_paise), 0))
+        .filter(CustomerLedgerEntry.customer_id == str(invoice.customer_id))
+        .scalar()
+    )
+    new_balance = current_bal + invoice.grand_total_paise
+
+    ledger_entry = CustomerLedgerEntry(
+        customer_id=str(invoice.customer_id),
+        entry_date=invoice.invoice_date,
+        entry_type="INVOICE",
+        reference_document_id=str(invoice.id),
+        reference_number=invoice.invoice_number,
+        debit_paise=invoice.grand_total_paise,
+        credit_paise=0,
+        running_balance_paise=new_balance,
+        description=f"Sales Invoice #{invoice.invoice_number}",
+    )
+    db.add(ledger_entry)
 
     db.commit()
     db.refresh(invoice)

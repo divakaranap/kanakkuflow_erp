@@ -12,6 +12,7 @@ import {
   Boxes,
   ShoppingCart,
   Truck,
+  Receipt,
 } from 'lucide-react'
 import { authService } from './services/authService'
 import { api } from './services/api'
@@ -20,6 +21,7 @@ import { InventoryOverview } from './features/inventory/InventoryOverview'
 import { ProductionOverview } from './features/production/ProductionOverview'
 import { SalesOverview } from './features/sales/SalesOverview'
 import { DispatchOverview } from './features/dispatch/DispatchOverview'
+import { PaymentOverview } from './features/payments/PaymentOverview'
 import type { UserInfo, UserRole } from './types/auth'
 
 export function App() {
@@ -29,7 +31,7 @@ export function App() {
   const [loading, setLoading] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
   const [healthStatus, setHealthStatus] = useState<{ status: string; database?: string } | null>(null)
-  const [currentView, setCurrentView] = useState<'dashboard' | 'masters' | 'inventory' | 'production' | 'sales' | 'dispatch'>('sales')
+  const [currentView, setCurrentView] = useState<'dashboard' | 'masters' | 'inventory' | 'production' | 'sales' | 'dispatch' | 'payments'>('sales')
 
   useEffect(() => {
     // Check backend health
@@ -145,6 +147,17 @@ export function App() {
               <span>Dispatch &amp; Stock Out</span>
             </button>
             <button
+              onClick={() => setCurrentView('payments')}
+              className={`px-3 py-1.5 rounded-md text-xs font-semibold transition flex items-center space-x-1.5 ${
+                currentView === 'payments'
+                  ? 'bg-white text-emerald-600 shadow-sm'
+                  : 'text-[#64748B] hover:text-[#172033]'
+              }`}
+            >
+              <Receipt className="h-3.5 w-3.5" />
+              <span>Payments &amp; Ledger</span>
+            </button>
+            <button
               onClick={() => setCurrentView('production')}
               className={`px-3 py-1.5 rounded-md text-xs font-semibold transition flex items-center space-x-1.5 ${
                 currentView === 'production'
@@ -231,7 +244,9 @@ export function App() {
       {/* Main Body */}
       <main className="flex-1 max-w-7xl w-full mx-auto p-6 flex flex-col justify-start">
         {currentUser ? (
-          currentView === 'dispatch' ? (
+          currentView === 'payments' ? (
+            <PaymentOverview />
+          ) : currentView === 'dispatch' ? (
             <DispatchOverview />
           ) : currentView === 'sales' ? (
             <SalesOverview />

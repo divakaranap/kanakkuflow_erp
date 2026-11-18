@@ -47,6 +47,13 @@ from backend.app.models.dispatch import (
     DispatchItem,
     DispatchStatus,
 )
+from backend.app.models.payment import (
+    CustomerPayment,
+    PaymentAllocation,
+    CustomerLedgerEntry,
+    PaymentMode,
+    PaymentStatus,
+)
 
 __all__ = [
     "Base",
@@ -94,4 +101,9 @@ __all__ = [
     "Dispatch",
     "DispatchItem",
     "DispatchStatus",
+    "CustomerPayment",
+    "PaymentAllocation",
+    "CustomerLedgerEntry",
+    "PaymentMode",
+    "PaymentStatus",
 ]

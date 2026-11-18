@@ -436,3 +436,178 @@ def generate_delivery_challan_pdf_buffer(dispatch: Any) -> BytesIO:
     doc.build(story)
     buffer.seek(0)
     return buffer
+
+
+def generate_payment_receipt_pdf_buffer(payment: Any) -> BytesIO:
+    """Generate an official Payment Receipt PDF using ReportLab."""
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(
+        buffer,
+        pagesize=A4,
+        rightMargin=36,
+        leftMargin=36,
+        topMargin=36,
+        bottomMargin=36,
+    )
+
+    styles = getSampleStyleSheet()
+    title_style = ParagraphStyle(
+        "ReceiptTitle",
+        parent=styles["Heading1"],
+        fontName="Helvetica-Bold",
+        fontSize=16,
+        leading=20,
+        textColor=colors.HexColor("#0f172a"),
+        alignment=1,
+    )
+    subtitle_style = ParagraphStyle(
+        "ReceiptSubTitle",
+        parent=styles["Normal"],
+        fontName="Helvetica",
+        fontSize=9,
+        leading=12,
+        textColor=colors.HexColor("#475569"),
+        alignment=1,
+    )
+    body_style = ParagraphStyle(
+        "ReceiptBody",
+        parent=styles["Normal"],
+        fontName="Helvetica",
+        fontSize=8,
+        leading=11,
+        textColor=colors.HexColor("#1e293b"),
+    )
+    table_cell_style = ParagraphStyle(
+        "ReceiptTableCell",
+        parent=styles["Normal"],
+        fontName="Helvetica",
+        fontSize=8,
+        leading=10,
+        textColor=colors.HexColor("#0f172a"),
+    )
+
+    story = []
+
+    seller_name = getattr(settings, "COMPANY_NAME", "FACTORYFLOW FOOD PRODUCTS")
+    seller_gstin = getattr(settings, "COMPANY_GSTIN", "33AABCF1234F1Z5")
+    seller_address = getattr(settings, "COMPANY_ADDRESS", "Plot 12, Food Processing Zone, Thuvakudi, Tiruchirappalli - 620015, Tamil Nadu")
+
+    # Header
+    story.append(Paragraph(f"<b>{seller_name}</b>", title_style))
+    story.append(Paragraph(f"{seller_address} &bull; GSTIN: <b>{seller_gstin}</b>", subtitle_style))
+    story.append(Spacer(1, 10))
+    story.append(HRFlowable(width="100%", thickness=1, color=colors.HexColor("#0f172a"), spaceBefore=2, spaceAfter=8))
+    story.append(Paragraph("<b>OFFICIAL PAYMENT RECEIPT</b>", ParagraphStyle("Hdr", parent=title_style, fontSize=13, textColor=colors.HexColor("#0284c7"))))
+    story.append(Spacer(1, 10))
+
+    # Meta Table: Receipt Details & Customer Details
+    cust = payment.customer
+    meta_data = [
+        [
+            Paragraph(f"<b>Receipt No:</b> {payment.payment_number}<br/>"
+                      f"<b>Date:</b> {payment.payment_date}<br/>"
+                      f"<b>Payment Mode:</b> {payment.payment_mode}<br/>"
+                      f"<b>Reference / UTR:</b> {payment.reference_number or 'N/A'}<br/>"
+                      f"<b>Bank:</b> {payment.bank_name or 'Direct'}", body_style),
+            Paragraph(f"<b>Received From:</b><br/>"
+                      f"<b>{cust.customer_name if cust else 'Customer'}</b> ({cust.customer_code if cust else 'N/A'})<br/>"
+                      f"{cust.billing_address if cust else ''}<br/>"
+                      f"{cust.city if cust else ''}, {cust.state if cust else ''} - {cust.pincode if cust else ''}<br/>"
+                      f"GSTIN: <b>{cust.gstin if cust and cust.gstin else 'Unregistered'}</b><br/>"
+                      f"Phone: {cust.phone if cust else 'N/A'}", body_style),
+        ]
+    ]
+    meta_table = Table(meta_data, colWidths=[260, 260])
+    meta_table.setStyle(TableStyle([
+        ("BOX", (0, 0), (-1, -1), 0.5, colors.HexColor("#cbd5e1")),
+        ("VALIGN", (0, 0), (-1, -1), "TOP"),
+        ("BACKGROUND", (0, 0), (0, 0), colors.HexColor("#f8fafc")),
+        ("PADDING", (0, 0), (-1, -1), 6),
+    ]))
+    story.append(meta_table)
+    story.append(Spacer(1, 12))
+
+    # Amount Received Box
+    amount_rs = payment.amount_paise / 100
+    amount_words = number_to_indian_words(int(amount_rs))
+    amt_box = [
+        [
+            Paragraph(f"<b>AMOUNT RECEIVED:</b> <font size=12 color='#0f766e'><b>₹{amount_rs:,.2f}</b></font><br/>"
+                      f"<b>Amount in Words:</b> {amount_words}", body_style)
+        ]
+    ]
+    amt_table = Table(amt_box, colWidths=[520])
+    amt_table.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, -1), colors.HexColor("#f0fdf4")),
+        ("BOX", (0, 0), (-1, -1), 1, colors.HexColor("#16a34a")),
+        ("PADDING", (0, 0), (-1, -1), 8),
+    ]))
+    story.append(amt_table)
+    story.append(Spacer(1, 12))
+
+    # Invoice Allocations Table
+    story.append(Paragraph("<b>Invoice Settlement &amp; Allocation Details</b>", ParagraphStyle("SubH", parent=body_style, fontName="Helvetica-Bold", fontSize=10)))
+    story.append(Spacer(1, 4))
+
+    alloc_rows = [
+        [
+            Paragraph("<b>#</b>", table_cell_style),
+            Paragraph("<b>Invoice Number</b>", table_cell_style),
+            Paragraph("<b>Invoice Date</b>", table_cell_style),
+            Paragraph("<b>Invoice Grand Total</b>", ParagraphStyle("HR", parent=table_cell_style, alignment=2)),
+            Paragraph("<b>Allocated Amount</b>", ParagraphStyle("HR", parent=table_cell_style, alignment=2)),
+        ]
+    ]
+
+    tot_alloc_paise = 0
+    if payment.allocations:
+        for idx, alloc in enumerate(payment.allocations, start=1):
+            inv = alloc.invoice
+            tot_alloc_paise += alloc.allocated_amount_paise
+            inv_total_rs = (inv.grand_total_paise / 100) if inv else 0
+            alloc_rs = alloc.allocated_amount_paise / 100
+            alloc_rows.append([
+                Paragraph(str(idx), table_cell_style),
+                Paragraph(inv.invoice_number if inv else "Direct", table_cell_style),
+                Paragraph(str(inv.invoice_date) if inv else "-", table_cell_style),
+                Paragraph(f"₹{inv_total_rs:,.2f}", ParagraphStyle("CR", parent=table_cell_style, alignment=2)),
+                Paragraph(f"₹{alloc_rs:,.2f}", ParagraphStyle("CR", parent=table_cell_style, alignment=2, fontName="Helvetica-Bold")),
+            ])
+    else:
+        alloc_rows.append([
+            Paragraph("1", table_cell_style),
+            Paragraph("On Account / Advance Payment", table_cell_style),
+            Paragraph(str(payment.payment_date), table_cell_style),
+            Paragraph("-", ParagraphStyle("CR", parent=table_cell_style, alignment=2)),
+            Paragraph(f"₹{amount_rs:,.2f}", ParagraphStyle("CR", parent=table_cell_style, alignment=2, fontName="Helvetica-Bold")),
+        ])
+
+    alloc_table = Table(alloc_rows, colWidths=[25, 145, 100, 125, 125])
+    alloc_table.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#f1f5f9")),
+        ("GRID", (0, 0), (-1, -1), 0.5, colors.HexColor("#cbd5e1")),
+        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+        ("PADDING", (0, 0), (-1, -1), 5),
+    ]))
+    story.append(alloc_table)
+    story.append(Spacer(1, 20))
+
+    # Signatures
+    sign_data = [
+        [
+            Paragraph("<b>Terms & Conditions:</b><br/>"
+                      "1. Subject to realization of Cheque / Electronic clearance.<br/>"
+                      "2. This is a computer generated receipt.", body_style),
+            Paragraph(f"For <b>{seller_name}</b><br/><br/><br/><br/><b>Authorized Accounts Signatory</b>", ParagraphStyle("SD", parent=body_style, alignment=2)),
+        ]
+    ]
+    sign_table = Table(sign_data, colWidths=[280, 240])
+    sign_table.setStyle(TableStyle([
+        ("VALIGN", (0, 0), (-1, -1), "TOP"),
+        ("PADDING", (0, 0), (-1, -1), 4),
+    ]))
+    story.append(sign_table)
+
+    doc.build(story)
+    buffer.seek(0)
+    return buffer

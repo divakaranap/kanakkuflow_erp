@@ -108,6 +108,8 @@ class SalesInvoice(Base, TimestampMixin):
         nullable=False,
         index=True,
     )
+    due_date: Mapped[Optional[date]] = mapped_column(Date, nullable=True)
+    amount_paid_paise: Mapped[int] = mapped_column(BigInteger, default=0, nullable=False)
     pdf_path: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
     cancellation_reason: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
 
