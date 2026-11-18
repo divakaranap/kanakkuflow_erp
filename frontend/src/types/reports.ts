@@ -38,6 +38,13 @@ export interface TopDebtor {
   over_30_days_paise: number
 }
 
+export interface RoleKpiCard {
+  title: string
+  value: string
+  desc: string
+  badge: string
+}
+
 export interface DashboardSummary {
   as_of_date: string
   sales: SalesKpi
@@ -46,4 +53,29 @@ export interface DashboardSummary {
   finance: FinanceKpi
   top_products: TopProduct[]
   top_debtors: TopDebtor[]
+  role_kpis?: {
+    card1: RoleKpiCard
+    card2: RoleKpiCard
+    card3: RoleKpiCard
+    card4: RoleKpiCard
+  }
+}
+
+export interface ReportPreviewData {
+  title: string
+  date_info: string
+  headers: string[]
+  rows: (string | number | null)[][]
+  total_records: number
+}
+
+export interface ExportHistoryItem {
+  id: string
+  reportName: string
+  reportPath: string
+  format: 'csv' | 'xlsx' | 'pdf'
+  periodLabel: string
+  timestamp: string
+  status: 'Ready' | 'Downloading' | 'Failed'
+  params?: Record<string, string>
 }

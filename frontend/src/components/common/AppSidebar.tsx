@@ -8,6 +8,7 @@ import {
   Factory,
   Boxes,
   Database,
+  Settings,
   ChevronRight,
   LogOut,
 } from 'lucide-react'
@@ -22,6 +23,7 @@ export type ERPView =
   | 'production'
   | 'inventory'
   | 'masters'
+  | 'settings'
 
 interface AppSidebarProps {
   currentView: ERPView
@@ -41,6 +43,7 @@ export const navItems: { id: ERPView; label: string; icon: React.ElementType; ba
   { id: 'production', label: 'Production & BOM', icon: Factory },
   { id: 'inventory', label: 'Inventory & Purchases', icon: Boxes },
   { id: 'masters', label: 'Master Data', icon: Database },
+  { id: 'settings', label: 'Settings', icon: Settings },
 ]
 
 export function AppSidebar({

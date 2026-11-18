@@ -4,14 +4,9 @@ import {
   Package,
   Layers,
   IndianRupee,
-  Download,
-  Calendar,
-  FileSpreadsheet,
-  FileText,
   AlertCircle,
   RefreshCw,
   Users,
-  CheckCircle2,
   BarChart3,
   PieChart as PieIcon,
   Truck,
@@ -37,6 +32,7 @@ import { paymentService } from '../../services/paymentService'
 import { authService } from '../../services/authService'
 import { MetricCard } from '../../components/common/MetricCard'
 import { StatusBadge } from '../../components/common/StatusBadge'
+import { ReportExportCenter } from '../../components/reports/ReportExportCenter'
 import type { DashboardSummary } from '../../types/reports'
 import type { SalesOrder } from '../../types/sales'
 import type { ProductionRun } from '../../types/production'
@@ -47,7 +43,6 @@ export function ExecutiveDashboard() {
   const [summary, setSummary] = useState<DashboardSummary | null>(null)
   const [loading, setLoading] = useState<boolean>(true)
   const [errorMsg, setErrorMsg] = useState<string>('')
-  const [downloading, setDownloading] = useState<string>('')
 
   // Recent operational records
   const [recentOrders, setRecentOrders] = useState<SalesOrder[]>([])
@@ -58,11 +53,6 @@ export function ExecutiveDashboard() {
 
   // Date range filter
   const [dateRange, setDateRange] = useState<'thisMonth' | 'last30' | 'q3' | 'custom'>('thisMonth')
-  const [fromDate, setFromDate] = useState<string>(
-    new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0]
-  )
-  const [toDate, setToDate] = useState<string>(new Date().toISOString().split('T')[0])
-  const [asOfDate, setAsOfDate] = useState<string>(new Date().toISOString().split('T')[0])
 
   const user = authService.getStoredUser()
   const firstName = user?.full_name ? user.full_name.split(' ')[0] : 'Venkatesh'
@@ -101,24 +91,6 @@ export function ExecutiveDashboard() {
       setErrorMsg(err.response?.data?.detail || 'Failed to load executive analytics summary')
     } finally {
       setLoading(false)
-    }
-  }
-
-  const handleExport = async (
-    reportPath: string,
-    format: 'csv' | 'xlsx' | 'pdf',
-    filenamePrefix: string,
-    reportKey: string,
-    params?: Record<string, string>
-  ) => {
-    try {
-      setDownloading(reportKey)
-      await reportService.downloadReport(reportPath, format, filenamePrefix, params)
-    } catch (err: any) {
-      console.error(`Export failed for ${reportKey}:`, err)
-      alert(err.response?.data?.detail || `Failed to export ${filenamePrefix} (${format.toUpperCase()})`)
-    } finally {
-      setDownloading('')
     }
   }
 
@@ -229,16 +201,16 @@ export function ExecutiveDashboard() {
         </div>
       )}
 
-      {/* 6 KPI Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-        {/* 1. Total Sales */}
+      {/* Primary KPI Cards - 4 Columns Desktop Row */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        {/* 1. Primary Card: Sales Revenue or Role KPI 1 */}
         <MetricCard
-          title="Total Sales"
-          value={summary ? formatCurrency(summary.sales.total_revenue_paise) : '₹7,875'}
+          title={summary?.role_kpis?.card1.title || 'Total Sales'}
+          value={summary?.role_kpis?.card1.value || (summary ? formatCurrency(summary.sales.total_revenue_paise) : '₹7,875')}
           icon={TrendingUp}
-          badgeText="+12.4%"
+          badgeText={summary?.role_kpis?.card1.badge || '+12.4%'}
           badgeVariant="success"
-          subtitle="Net revenue MTD"
+          subtitle={summary?.role_kpis?.card1.desc || 'Net revenue MTD'}
           footer={
             <div className="flex justify-between items-center text-[11px]">
               <span>Orders: {summary?.sales.orders_count || 1}</span>
@@ -247,16 +219,16 @@ export function ExecutiveDashboard() {
           }
         />
 
-        {/* 2. Total Production */}
+        {/* 2. Primary Card: Production Output or Role KPI 2 */}
         <MetricCard
-          title="Total Production"
-          value={summary ? `${summary.production.total_packets_produced.toLocaleString()} Pkts` : '238 Pkts'}
+          title={summary?.role_kpis?.card2.title || 'Total Production'}
+          value={summary?.role_kpis?.card2.value || (summary ? `${summary.production.total_packets_produced.toLocaleString()} Pkts` : '238 Pkts')}
           icon={Package}
-          badgeText={summary?.production.avg_yield_variance_pct ? `${summary.production.avg_yield_variance_pct}%` : '-4.8%'}
+          badgeText={summary?.role_kpis?.card2.badge || (summary?.production.avg_yield_variance_pct ? `${summary.production.avg_yield_variance_pct}%` : '-4.8%')}
           badgeVariant={
             (summary?.production.avg_yield_variance_pct || -4.8) < 0 ? 'warning' : 'success'
           }
-          subtitle="Kai Murukku 200g"
+          subtitle={summary?.role_kpis?.card2.desc || 'Kai Murukku 200g'}
           footer={
             <div className="flex justify-between items-center text-[11px]">
               <span>Runs: {summary?.production.completed_runs_count || 1} Batch</span>
@@ -265,14 +237,14 @@ export function ExecutiveDashboard() {
           }
         />
 
-        {/* 3. Inventory Value */}
+        {/* 3. Primary Card: Inventory Value or Role KPI 3 */}
         <MetricCard
-          title="Inventory Value"
-          value={summary ? formatCurrency(summary.inventory.total_valuation_paise) : '₹1,02,310'}
+          title={summary?.role_kpis?.card3.title || 'Inventory Value'}
+          value={summary?.role_kpis?.card3.value || (summary ? formatCurrency(summary.inventory.total_valuation_paise) : '₹1,02,310')}
           icon={Layers}
-          badgeText="Active"
+          badgeText={summary?.role_kpis?.card3.badge || 'Active'}
           badgeVariant="purple"
-          subtitle="Moving weighted avg"
+          subtitle={summary?.role_kpis?.card3.desc || 'Moving weighted avg'}
           footer={
             <div className="flex justify-between items-center text-[11px]">
               <span>RM: {summary ? formatCurrency(summary.inventory.raw_materials_paise) : '₹80,560'}</span>
@@ -281,14 +253,14 @@ export function ExecutiveDashboard() {
           }
         />
 
-        {/* 4. Outstanding Receivables */}
+        {/* 4. Primary Card: Outstanding Receivables or Role KPI 4 */}
         <MetricCard
-          title="Receivables"
-          value={summary ? formatCurrency(summary.finance.total_receivables_paise) : '₹3,875'}
+          title={summary?.role_kpis?.card4.title || 'Receivables'}
+          value={summary?.role_kpis?.card4.value || (summary ? formatCurrency(summary.finance.total_receivables_paise) : '₹3,875')}
           icon={IndianRupee}
-          badgeText={summary?.finance.over_30_days_paise === 0 ? 'Current' : 'Overdue'}
+          badgeText={summary?.role_kpis?.card4.badge || (summary?.finance.over_30_days_paise === 0 ? 'Current' : 'Overdue')}
           badgeVariant="info"
-          subtitle="Due from Retailer A"
+          subtitle={summary?.role_kpis?.card4.desc || 'Due from Retailer A'}
           footer={
             <div className="flex justify-between items-center text-[11px]">
               <span>Paid: {summary ? formatCurrency(summary.finance.total_collections_paise) : '₹4,000'}</span>
@@ -296,8 +268,10 @@ export function ExecutiveDashboard() {
             </div>
           }
         />
+      </div>
 
-        {/* 5. Pending Orders */}
+      {/* Secondary Operational Metrics Section - 4 Columns */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         <MetricCard
           title="Order Fulfillment"
           value="100%"
@@ -313,7 +287,6 @@ export function ExecutiveDashboard() {
           }
         />
 
-        {/* 6. Production Cost per Packet */}
         <MetricCard
           title="Cost per Packet"
           value="₹24.60"
@@ -325,6 +298,36 @@ export function ExecutiveDashboard() {
             <div className="flex justify-between items-center text-[11px]">
               <span>RM: ₹17.04</span>
               <span>Overheads: ₹7.56</span>
+            </div>
+          }
+        />
+
+        <MetricCard
+          title="Raw Materials Stock"
+          value={summary ? formatCurrency(summary.inventory.raw_materials_paise) : '₹80,560'}
+          icon={Layers}
+          badgeText="Available"
+          badgeVariant="purple"
+          subtitle="Flour, oil & spices in store"
+          footer={
+            <div className="flex justify-between items-center text-[11px]">
+              <span>Flour: 95.0 kg</span>
+              <span className="text-[#16A36A] font-semibold">Oil: 47.0 L</span>
+            </div>
+          }
+        />
+
+        <MetricCard
+          title="Finished Goods Stock"
+          value={summary ? formatCurrency(summary.inventory.finished_goods_paise) : '₹8,350'}
+          icon={Package}
+          badgeText="In Warehouse"
+          badgeVariant="info"
+          subtitle="Packaged Kai Murukku"
+          footer={
+            <div className="flex justify-between items-center text-[11px]">
+              <span>Available: 88 Pkts</span>
+              <span className="text-[#7655E8] font-semibold">Ready to Ship</span>
             </div>
           }
         />
@@ -750,365 +753,8 @@ export function ExecutiveDashboard() {
         )}
       </div>
 
-      {/* One-Click Statutory & Audit Export Center */}
-      <div className="bg-white p-6 rounded-2xl border border-[#EAE8F1] shadow-card space-y-6">
-        <div className="border-b border-[#EAE8F1] pb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-          <div>
-            <div className="flex items-center gap-2">
-              <Download className="w-5 h-5 text-[#7655E8]" />
-              <h2 className="text-base font-bold text-[#17152B]">Statutory &amp; Management Report Export Center</h2>
-            </div>
-            <p className="text-xs text-[#77758A] mt-0.5">
-              Generate audit-ready statutory reports directly from immutable ledgers into CSV, Excel (.xlsx), and PDF.
-            </p>
-          </div>
-        </div>
-
-        {/* Global Export Filter Bar */}
-        <div className="flex flex-wrap items-center gap-4 bg-[#F8F7FC] p-4 rounded-xl border border-[#EAE8F1] text-xs">
-          <div className="flex items-center gap-2">
-            <Calendar className="w-4 h-4 text-[#7655E8]" />
-            <span className="font-bold text-[#17152B]">Period Filter:</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <label className="text-[#77758A]">From:</label>
-            <input
-              type="date"
-              value={fromDate}
-              onChange={(e) => setFromDate(e.target.value)}
-              className="px-2.5 py-1.5 bg-white border border-[#EAE8F1] rounded-lg text-xs text-[#17152B] focus:outline-none focus:ring-1 focus:ring-[#7655E8]"
-            />
-          </div>
-          <div className="flex items-center gap-2">
-            <label className="text-[#77758A]">To:</label>
-            <input
-              type="date"
-              value={toDate}
-              onChange={(e) => setToDate(e.target.value)}
-              className="px-2.5 py-1.5 bg-white border border-[#EAE8F1] rounded-lg text-xs text-[#17152B] focus:outline-none focus:ring-1 focus:ring-[#7655E8]"
-            />
-          </div>
-          <div className="flex items-center gap-2 ml-auto">
-            <label className="text-[#77758A]">As-Of Snapshot:</label>
-            <input
-              type="date"
-              value={asOfDate}
-              onChange={(e) => setAsOfDate(e.target.value)}
-              className="px-2.5 py-1.5 bg-white border border-[#EAE8F1] rounded-lg text-xs text-[#17152B] focus:outline-none focus:ring-1 focus:ring-[#7655E8]"
-            />
-          </div>
-        </div>
-
-        {/* Export Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {/* GSTR-1 Sales */}
-          <div className="p-4 rounded-xl border border-[#EAE8F1] bg-[#FAFAFD] hover:bg-white hover:border-[#7655E8]/30 transition-all shadow-xs flex flex-col justify-between group">
-            <div>
-              <div className="flex items-center gap-2 text-[#7655E8] mb-1">
-                <FileSpreadsheet className="w-4 h-4" />
-                <h3 className="font-bold text-[#17152B] text-xs">GSTR-1 Sales Register</h3>
-              </div>
-              <p className="text-[11px] text-[#77758A] leading-relaxed">
-                GSTIN, taxable values, IGST/CGST/SGST breakdown, and invoice totals.
-              </p>
-            </div>
-            <div className="flex items-center gap-2 mt-4 pt-3 border-t border-[#EAE8F1]">
-              <button
-                onClick={() =>
-                  handleExport('/reports/gstr1', 'csv', 'GSTR1_Sales', 'gstr1-csv', {
-                    from_date: fromDate,
-                    to_date: toDate,
-                  })
-                }
-                disabled={downloading === 'gstr1-csv'}
-                className="flex-1 py-1.5 px-2 text-[11px] font-semibold rounded-lg border border-[#EAE8F1] bg-white hover:bg-[#F8F7FC] text-[#17152B] text-center transition"
-              >
-                CSV
-              </button>
-              <button
-                onClick={() =>
-                  handleExport('/reports/gstr1', 'xlsx', 'GSTR1_Sales', 'gstr1-xlsx', {
-                    from_date: fromDate,
-                    to_date: toDate,
-                  })
-                }
-                disabled={downloading === 'gstr1-xlsx'}
-                className="flex-1 py-1.5 px-2 text-[11px] font-semibold rounded-lg border border-emerald-200 bg-emerald-50 text-[#16A36A] hover:bg-emerald-100 text-center transition"
-              >
-                Excel
-              </button>
-              <button
-                onClick={() =>
-                  handleExport('/reports/gstr1', 'pdf', 'GSTR1_Sales', 'gstr1-pdf', {
-                    from_date: fromDate,
-                    to_date: toDate,
-                  })
-                }
-                disabled={downloading === 'gstr1-pdf'}
-                className="flex-1 py-1.5 px-2 text-[11px] font-semibold rounded-lg border border-[#EAE8F1] bg-[#F2EEFF] text-[#7655E8] hover:bg-[#E4DDFF] text-center transition"
-              >
-                PDF
-              </button>
-            </div>
-          </div>
-
-          {/* GSTR-2 Purchases */}
-          <div className="p-4 rounded-xl border border-[#EAE8F1] bg-[#FAFAFD] hover:bg-white hover:border-[#7655E8]/30 transition-all shadow-xs flex flex-col justify-between group">
-            <div>
-              <div className="flex items-center gap-2 text-[#9675F5] mb-1">
-                <FileSpreadsheet className="w-4 h-4" />
-                <h3 className="font-bold text-[#17152B] text-xs">GSTR-2 Purchase Register</h3>
-              </div>
-              <p className="text-[11px] text-[#77758A] leading-relaxed">
-                Supplier GSTIN, GRN inward vouchers, raw materials purchases and ITC.
-              </p>
-            </div>
-            <div className="flex items-center gap-2 mt-4 pt-3 border-t border-[#EAE8F1]">
-              <button
-                onClick={() =>
-                  handleExport('/reports/gstr2', 'csv', 'GSTR2_Purchases', 'gstr2-csv', {
-                    from_date: fromDate,
-                    to_date: toDate,
-                  })
-                }
-                disabled={downloading === 'gstr2-csv'}
-                className="flex-1 py-1.5 px-2 text-[11px] font-semibold rounded-lg border border-[#EAE8F1] bg-white hover:bg-[#F8F7FC] text-[#17152B] text-center transition"
-              >
-                CSV
-              </button>
-              <button
-                onClick={() =>
-                  handleExport('/reports/gstr2', 'xlsx', 'GSTR2_Purchases', 'gstr2-xlsx', {
-                    from_date: fromDate,
-                    to_date: toDate,
-                  })
-                }
-                disabled={downloading === 'gstr2-xlsx'}
-                className="flex-1 py-1.5 px-2 text-[11px] font-semibold rounded-lg border border-emerald-200 bg-emerald-50 text-[#16A36A] hover:bg-emerald-100 text-center transition"
-              >
-                Excel
-              </button>
-              <button
-                onClick={() =>
-                  handleExport('/reports/gstr2', 'pdf', 'GSTR2_Purchases', 'gstr2-pdf', {
-                    from_date: fromDate,
-                    to_date: toDate,
-                  })
-                }
-                disabled={downloading === 'gstr2-pdf'}
-                className="flex-1 py-1.5 px-2 text-[11px] font-semibold rounded-lg border border-[#EAE8F1] bg-[#F2EEFF] text-[#7655E8] hover:bg-[#E4DDFF] text-center transition"
-              >
-                PDF
-              </button>
-            </div>
-          </div>
-
-          {/* Stock Movement Ledger */}
-          <div className="p-4 rounded-xl border border-[#EAE8F1] bg-[#FAFAFD] hover:bg-white hover:border-[#7655E8]/30 transition-all shadow-xs flex flex-col justify-between group">
-            <div>
-              <div className="flex items-center gap-2 text-[#16A36A] mb-1">
-                <Layers className="w-4 h-4" />
-                <h3 className="font-bold text-[#17152B] text-xs">Stock Movement Ledger</h3>
-              </div>
-              <p className="text-[11px] text-[#77758A] leading-relaxed">
-                Full chronological ledger for RM, Packaging &amp; FG stock ins and outs.
-              </p>
-            </div>
-            <div className="flex items-center gap-2 mt-4 pt-3 border-t border-[#EAE8F1]">
-              <button
-                onClick={() =>
-                  handleExport('/reports/stock-movement', 'csv', 'Stock_Movement_Ledger', 'stock-csv', {
-                    from_date: fromDate,
-                    to_date: toDate,
-                  })
-                }
-                disabled={downloading === 'stock-csv'}
-                className="flex-1 py-1.5 px-2 text-[11px] font-semibold rounded-lg border border-[#EAE8F1] bg-white hover:bg-[#F8F7FC] text-[#17152B] text-center transition"
-              >
-                CSV
-              </button>
-              <button
-                onClick={() =>
-                  handleExport('/reports/stock-movement', 'xlsx', 'Stock_Movement_Ledger', 'stock-xlsx', {
-                    from_date: fromDate,
-                    to_date: toDate,
-                  })
-                }
-                disabled={downloading === 'stock-xlsx'}
-                className="flex-1 py-1.5 px-2 text-[11px] font-semibold rounded-lg border border-emerald-200 bg-emerald-50 text-[#16A36A] hover:bg-emerald-100 text-center transition"
-              >
-                Excel
-              </button>
-              <button
-                onClick={() =>
-                  handleExport('/reports/stock-movement', 'pdf', 'Stock_Movement_Ledger', 'stock-pdf', {
-                    from_date: fromDate,
-                    to_date: toDate,
-                  })
-                }
-                disabled={downloading === 'stock-pdf'}
-                className="flex-1 py-1.5 px-2 text-[11px] font-semibold rounded-lg border border-[#EAE8F1] bg-[#F2EEFF] text-[#7655E8] hover:bg-[#E4DDFF] text-center transition"
-              >
-                PDF
-              </button>
-            </div>
-          </div>
-
-          {/* Production Yield Variance */}
-          <div className="p-4 rounded-xl border border-[#EAE8F1] bg-[#FAFAFD] hover:bg-white hover:border-[#7655E8]/30 transition-all shadow-xs flex flex-col justify-between group">
-            <div>
-              <div className="flex items-center gap-2 text-[#7655E8] mb-1">
-                <Package className="w-4 h-4" />
-                <h3 className="font-bold text-[#17152B] text-xs">Production Yield Variance</h3>
-              </div>
-              <p className="text-[11px] text-[#77758A] leading-relaxed">
-                Batch yield analysis, planned vs actual output, waste % and unit cost.
-              </p>
-            </div>
-            <div className="flex items-center gap-2 mt-4 pt-3 border-t border-[#EAE8F1]">
-              <button
-                onClick={() =>
-                  handleExport('/reports/production-yield', 'csv', 'Yield_Variance_Report', 'yield-csv', {
-                    from_date: fromDate,
-                    to_date: toDate,
-                  })
-                }
-                disabled={downloading === 'yield-csv'}
-                className="flex-1 py-1.5 px-2 text-[11px] font-semibold rounded-lg border border-[#EAE8F1] bg-white hover:bg-[#F8F7FC] text-[#17152B] text-center transition"
-              >
-                CSV
-              </button>
-              <button
-                onClick={() =>
-                  handleExport('/reports/production-yield', 'xlsx', 'Yield_Variance_Report', 'yield-xlsx', {
-                    from_date: fromDate,
-                    to_date: toDate,
-                  })
-                }
-                disabled={downloading === 'yield-xlsx'}
-                className="flex-1 py-1.5 px-2 text-[11px] font-semibold rounded-lg border border-emerald-200 bg-emerald-50 text-[#16A36A] hover:bg-emerald-100 text-center transition"
-              >
-                Excel
-              </button>
-              <button
-                onClick={() =>
-                  handleExport('/reports/production-yield', 'pdf', 'Yield_Variance_Report', 'yield-pdf', {
-                    from_date: fromDate,
-                    to_date: toDate,
-                  })
-                }
-                disabled={downloading === 'yield-pdf'}
-                className="flex-1 py-1.5 px-2 text-[11px] font-semibold rounded-lg border border-[#EAE8F1] bg-[#F2EEFF] text-[#7655E8] hover:bg-[#E4DDFF] text-center transition"
-              >
-                PDF
-              </button>
-            </div>
-          </div>
-
-          {/* Receivables Ageing */}
-          <div className="p-4 rounded-xl border border-[#EAE8F1] bg-[#FAFAFD] hover:bg-white hover:border-[#7655E8]/30 transition-all shadow-xs flex flex-col justify-between group">
-            <div>
-              <div className="flex items-center gap-2 text-[#E9A23B] mb-1">
-                <IndianRupee className="w-4 h-4" />
-                <h3 className="font-bold text-[#17152B] text-xs">Receivables Ageing Analysis</h3>
-              </div>
-              <p className="text-[11px] text-[#77758A] leading-relaxed">
-                0-30, 31-60, 61-90 and &gt;90 days overdue buckets per distributor/retailer.
-              </p>
-            </div>
-            <div className="flex items-center gap-2 mt-4 pt-3 border-t border-[#EAE8F1]">
-              <button
-                onClick={() =>
-                  handleExport('/reports/receivables-ageing', 'csv', 'Receivables_Ageing', 'ageing-csv', {
-                    as_of: asOfDate,
-                  })
-                }
-                disabled={downloading === 'ageing-csv'}
-                className="flex-1 py-1.5 px-2 text-[11px] font-semibold rounded-lg border border-[#EAE8F1] bg-white hover:bg-[#F8F7FC] text-[#17152B] text-center transition"
-              >
-                CSV
-              </button>
-              <button
-                onClick={() =>
-                  handleExport('/reports/receivables-ageing', 'xlsx', 'Receivables_Ageing', 'ageing-xlsx', {
-                    as_of: asOfDate,
-                  })
-                }
-                disabled={downloading === 'ageing-xlsx'}
-                className="flex-1 py-1.5 px-2 text-[11px] font-semibold rounded-lg border border-emerald-200 bg-emerald-50 text-[#16A36A] hover:bg-emerald-100 text-center transition"
-              >
-                Excel
-              </button>
-              <button
-                onClick={() =>
-                  handleExport('/reports/receivables-ageing', 'pdf', 'Receivables_Ageing', 'ageing-pdf', {
-                    as_of: asOfDate,
-                  })
-                }
-                disabled={downloading === 'ageing-pdf'}
-                className="flex-1 py-1.5 px-2 text-[11px] font-semibold rounded-lg border border-[#EAE8F1] bg-[#F2EEFF] text-[#7655E8] hover:bg-[#E4DDFF] text-center transition"
-              >
-                PDF
-              </button>
-            </div>
-          </div>
-
-          {/* Full Trial Balance */}
-          <div className="p-4 rounded-xl border border-[#EAE8F1] bg-[#FAFAFD] hover:bg-white hover:border-[#7655E8]/30 transition-all shadow-xs flex flex-col justify-between group">
-            <div>
-              <div className="flex items-center gap-2 text-[#4385E8] mb-1">
-                <FileText className="w-4 h-4" />
-                <h3 className="font-bold text-[#17152B] text-xs">Financial Trial Balance</h3>
-              </div>
-              <p className="text-[11px] text-[#77758A] leading-relaxed">
-                Complete Chart of Accounts with verified debits, credits and balance check.
-              </p>
-            </div>
-            <div className="flex items-center gap-2 mt-4 pt-3 border-t border-[#EAE8F1]">
-              <button
-                onClick={() =>
-                  handleExport('/reports/trial-balance', 'csv', 'Trial_Balance', 'tb-csv', {
-                    as_of: asOfDate,
-                  })
-                }
-                disabled={downloading === 'tb-csv'}
-                className="flex-1 py-1.5 px-2 text-[11px] font-semibold rounded-lg border border-[#EAE8F1] bg-white hover:bg-[#F8F7FC] text-[#17152B] text-center transition"
-              >
-                CSV
-              </button>
-              <button
-                onClick={() =>
-                  handleExport('/reports/trial-balance', 'xlsx', 'Trial_Balance', 'tb-xlsx', {
-                    as_of: asOfDate,
-                  })
-                }
-                disabled={downloading === 'tb-xlsx'}
-                className="flex-1 py-1.5 px-2 text-[11px] font-semibold rounded-lg border border-emerald-200 bg-emerald-50 text-[#16A36A] hover:bg-emerald-100 text-center transition"
-              >
-                Excel
-              </button>
-              <button
-                onClick={() =>
-                  handleExport('/reports/trial-balance', 'pdf', 'Trial_Balance', 'tb-pdf', {
-                    as_of: asOfDate,
-                  })
-                }
-                disabled={downloading === 'tb-pdf'}
-                className="flex-1 py-1.5 px-2 text-[11px] font-semibold rounded-lg border border-[#EAE8F1] bg-[#F2EEFF] text-[#7655E8] hover:bg-[#E4DDFF] text-center transition"
-              >
-                PDF
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div className="p-3 bg-[#F2EEFF] rounded-xl border border-[#EAE8F1] text-xs text-[#7655E8] flex items-center gap-2">
-          <CheckCircle2 className="w-4 h-4 flex-shrink-0 text-[#7655E8]" />
-          <span className="font-medium">
-            All exported statutory reports reflect live posted entries from the immutable double-entry ledger and inventory movement journals.
-          </span>
-        </div>
-      </div>
+      {/* Statutory & Management Report Export Center */}
+      <ReportExportCenter />
     </div>
   )
 }

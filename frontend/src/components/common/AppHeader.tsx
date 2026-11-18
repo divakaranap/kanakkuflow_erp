@@ -40,6 +40,7 @@ const viewMeta: Record<ERPView, { title: string; breadcrumb: string }> = {
   production: { title: 'Production & Recipe BOM Engine', breadcrumb: 'Manufacturing' },
   inventory: { title: 'Inventory Movement & Valuations', breadcrumb: 'Inventory' },
   masters: { title: 'Master Data Management', breadcrumb: 'Configuration' },
+  settings: { title: 'System Settings & Audit Profile', breadcrumb: 'Settings' },
 }
 
 export function AppHeader({

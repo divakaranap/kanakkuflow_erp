@@ -16,6 +16,7 @@ import { DispatchOverview } from './features/dispatch/DispatchOverview'
 import { PaymentOverview } from './features/payments/PaymentOverview'
 import { AccountingOverview } from './features/accounting/AccountingOverview'
 import { ExecutiveDashboard } from './features/dashboard/ExecutiveDashboard'
+import { SettingsOverview } from './features/settings/SettingsOverview'
 import type { UserInfo } from './types/auth'
 
 export function App() {
@@ -154,6 +155,7 @@ export function App() {
             {currentView === 'production' && <ProductionOverview />}
             {currentView === 'inventory' && <InventoryOverview />}
             {currentView === 'masters' && <MasterDataOverview />}
+            {currentView === 'settings' && <SettingsOverview />}
           </main>
 
           {/* Subtle Clean Footer */}
