@@ -375,12 +375,77 @@ def seed_master_data(db: Session) -> None:
     print("-> Phase 2 Master Data seeded successfully.")
 
 
+def seed_phase3_inventory(db: Session) -> None:
+    print("-> Seeding Phase 3 Benchmark Opening Stocks...")
+    from backend.app.models.inventory import StockMovement, MovementType, InventoryItemType
+    from backend.app.services.inventory_service import initialize_opening_stock
+
+    admin = db.query(User).filter(User.username == "admin").first()
+    admin_id = admin.id if admin else None
+
+    # Benchmark Opening Stock definition:
+    # Item Code, Item Type, Quantity, Unit Cost (paise), Reference
+    benchmarks = [
+        ("RAW-FLOUR-01", InventoryItemType.RAW, Decimal("100.0000"), 4200, "Rice & Urad Flour 100kg @ ₹42/kg"),
+        ("RAW-OIL-01", InventoryItemType.RAW, Decimal("30.0000"), 14000, "Refined Cooking Oil 30L @ ₹140/L"),
+        ("RAW-SPICE-01", InventoryItemType.RAW, Decimal("5.0000"), 20000, "Chilli & Asafoetida Spice Mix 5kg @ ₹200/kg"),
+        ("PKG-POUCH-01", InventoryItemType.PACKAGING, Decimal("500.0000"), 250, "Printed 200g Pouches 500 pcs @ ₹2.50/pc"),
+        ("PKG-BOX-01", InventoryItemType.PACKAGING, Decimal("30.0000"), 1500, "Outer Master Cartons 30 pcs @ ₹15.00/pc"),
+        ("MUR-200", InventoryItemType.FG, Decimal("50.0000"), 3500, "Murukku 200g Finished Goods 50 pkts @ ₹35.00/pkt"),
+    ]
+
+    for code, itype, qty, unit_cost, notes in benchmarks:
+        # Find item id
+        item_id = None
+        if itype == InventoryItemType.RAW:
+            rm = db.query(RawMaterial).filter(RawMaterial.material_code == code).first()
+            if rm:
+                item_id = rm.id
+        elif itype == InventoryItemType.PACKAGING:
+            pkg = db.query(PackagingItem).filter(PackagingItem.packaging_code == code).first()
+            if pkg:
+                item_id = pkg.id
+        elif itype == InventoryItemType.FG:
+            prod = db.query(Product).filter(Product.sku == code).first()
+            if prod:
+                item_id = prod.id
+
+        if not item_id:
+            print(f"   [!] Warning: Item {code} not found, skipping opening stock.")
+            continue
+
+        existing = db.query(StockMovement).filter(
+            StockMovement.item_type == itype,
+            StockMovement.item_id == item_id,
+            StockMovement.movement_type == MovementType.OPENING,
+        ).first()
+
+        if not existing:
+            initialize_opening_stock(
+                db=db,
+                item_type=itype,
+                item_id=item_id,
+                quantity=qty,
+                unit_cost_paise=unit_cost,
+                user_id=admin_id,
+                notes=notes,
+                reference_number="BENCHMARK-OPENING",
+            )
+            print(f"   [+] Initialized opening stock for {code}: {qty} @ ₹{unit_cost/100:.2f}")
+        else:
+            print(f"   [*] Opening stock already exists for {code}")
+
+    db.commit()
+    print("-> Phase 3 Opening Stock seeded successfully.")
+
+
 def run_seed():
     Base.metadata.create_all(bind=engine)
     db = SessionLocal()
     try:
         seed_users(db)
         seed_master_data(db)
+        seed_phase3_inventory(db)
     finally:
         db.close()
 

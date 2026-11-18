@@ -6,6 +6,21 @@ from backend.app.models.product import Product, ProductCategory
 from backend.app.models.raw_material import RawMaterial, RawMaterialCategory
 from backend.app.models.packaging import PackagingItem, PackagingCategory
 from backend.app.models.price_list import PriceList, PriceListItem, PriceListCustomerType
+from backend.app.models.inventory import (
+    StockMovement,
+    InventoryBalance,
+    InventoryAdjustment,
+    InventoryItemType,
+    MovementType,
+    AdjustmentType,
+    AdjustmentStatus,
+)
+from backend.app.models.purchase import (
+    Purchase,
+    PurchaseLine,
+    PurchaseStatus,
+    PurchaseItemType,
+)
 
 __all__ = [
     "Base",
@@ -24,4 +39,15 @@ __all__ = [
     "PriceList",
     "PriceListItem",
     "PriceListCustomerType",
+    "StockMovement",
+    "InventoryBalance",
+    "InventoryAdjustment",
+    "InventoryItemType",
+    "MovementType",
+    "AdjustmentType",
+    "AdjustmentStatus",
+    "Purchase",
+    "PurchaseLine",
+    "PurchaseStatus",
+    "PurchaseItemType",
 ]

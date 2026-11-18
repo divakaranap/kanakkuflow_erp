@@ -16,6 +16,24 @@ from backend.app.schemas.price_list import (
     EffectivePriceResponse,
 )
 from backend.app.schemas.unit import UnitConvertRequest, UnitConvertResponse, SupportedUnitsResponse
+from backend.app.schemas.inventory import (
+    OpeningStockCreate,
+    StockMovementOut,
+    StockSummaryItem,
+    StockValuationItem,
+    StockValuationSummary,
+    StockReconciliationItem,
+    StockReconciliationReport,
+    AdjustmentCreate,
+    AdjustmentOut,
+)
+from backend.app.schemas.purchase import (
+    PurchaseLineCreate,
+    PurchaseLineOut,
+    PurchaseCreate,
+    PurchaseUpdate,
+    PurchaseOut,
+)
 
 __all__ = [
     "LoginRequest",
@@ -58,4 +76,18 @@ __all__ = [
     "UnitConvertRequest",
     "UnitConvertResponse",
     "SupportedUnitsResponse",
+    "OpeningStockCreate",
+    "StockMovementOut",
+    "StockSummaryItem",
+    "StockValuationItem",
+    "StockValuationSummary",
+    "StockReconciliationItem",
+    "StockReconciliationReport",
+    "AdjustmentCreate",
+    "AdjustmentOut",
+    "PurchaseLineCreate",
+    "PurchaseLineOut",
+    "PurchaseCreate",
+    "PurchaseUpdate",
+    "PurchaseOut",
 ]

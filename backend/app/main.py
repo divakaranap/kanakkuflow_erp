@@ -19,6 +19,8 @@ from backend.app.api.raw_materials import router as raw_materials_router
 from backend.app.api.packaging import router as packaging_router
 from backend.app.api.price_lists import router as price_lists_router
 from backend.app.api.units import router as units_router
+from backend.app.api.inventory import router as inventory_router
+from backend.app.api.purchases import router as purchases_router
 
 
 @asynccontextmanager
@@ -60,6 +62,8 @@ app.include_router(raw_materials_router)
 app.include_router(packaging_router)
 app.include_router(price_lists_router)
 app.include_router(units_router)
+app.include_router(inventory_router)
+app.include_router(purchases_router)
 
 # Versioned API routes (/api/v1/...)
 app.include_router(health_router, prefix=settings.API_V1_STR)
@@ -72,6 +76,8 @@ app.include_router(raw_materials_router, prefix=settings.API_V1_STR)
 app.include_router(packaging_router, prefix=settings.API_V1_STR)
 app.include_router(price_lists_router, prefix=settings.API_V1_STR)
 app.include_router(units_router, prefix=settings.API_V1_STR)
+app.include_router(inventory_router, prefix=settings.API_V1_STR)
+app.include_router(purchases_router, prefix=settings.API_V1_STR)
 
 
 @app.get("/")
