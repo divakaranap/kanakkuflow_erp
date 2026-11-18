@@ -10,12 +10,14 @@ import {
   Database,
   LayoutDashboard,
   Boxes,
+  ShoppingCart,
 } from 'lucide-react'
 import { authService } from './services/authService'
 import { api } from './services/api'
 import { MasterDataOverview } from './features/masters/MasterDataOverview'
 import { InventoryOverview } from './features/inventory/InventoryOverview'
 import { ProductionOverview } from './features/production/ProductionOverview'
+import { SalesOverview } from './features/sales/SalesOverview'
 import type { UserInfo, UserRole } from './types/auth'
 
 export function App() {
@@ -25,7 +27,7 @@ export function App() {
   const [loading, setLoading] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
   const [healthStatus, setHealthStatus] = useState<{ status: string; database?: string } | null>(null)
-  const [currentView, setCurrentView] = useState<'dashboard' | 'masters' | 'inventory' | 'production'>('production')
+  const [currentView, setCurrentView] = useState<'dashboard' | 'masters' | 'inventory' | 'production' | 'sales'>('sales')
 
   useEffect(() => {
     // Check backend health
@@ -119,6 +121,17 @@ export function App() {
         {currentUser && (
           <div className="flex items-center space-x-2 bg-slate-100 p-1 rounded-lg border border-[#E2E8F0]">
             <button
+              onClick={() => setCurrentView('sales')}
+              className={`px-3 py-1.5 rounded-md text-xs font-semibold transition flex items-center space-x-1.5 ${
+                currentView === 'sales'
+                  ? 'bg-white text-blue-600 shadow-sm'
+                  : 'text-[#64748B] hover:text-[#172033]'
+              }`}
+            >
+              <ShoppingCart className="h-3.5 w-3.5" />
+              <span>Sales &amp; Invoices</span>
+            </button>
+            <button
               onClick={() => setCurrentView('production')}
               className={`px-3 py-1.5 rounded-md text-xs font-semibold transition flex items-center space-x-1.5 ${
                 currentView === 'production'
@@ -127,7 +140,7 @@ export function App() {
               }`}
             >
               <Factory className="h-3.5 w-3.5" />
-              <span>Production & BOM</span>
+              <span>Production &amp; BOM</span>
             </button>
             <button
               onClick={() => setCurrentView('inventory')}
@@ -205,7 +218,9 @@ export function App() {
       {/* Main Body */}
       <main className="flex-1 max-w-7xl w-full mx-auto p-6 flex flex-col justify-start">
         {currentUser ? (
-          currentView === 'production' ? (
+          currentView === 'sales' ? (
+            <SalesOverview />
+          ) : currentView === 'production' ? (
             <ProductionOverview />
           ) : currentView === 'inventory' ? (
             <InventoryOverview />

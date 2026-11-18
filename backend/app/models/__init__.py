@@ -34,6 +34,14 @@ from backend.app.models.production import (
     OverheadExpenseType,
     VarianceStatus,
 )
+from backend.app.models.sales import (
+    SalesOrder,
+    SalesOrderItem,
+    SalesInvoice,
+    SalesInvoiceItem,
+    SalesOrderStatus,
+    InvoiceStatus,
+)
 
 __all__ = [
     "Base",
@@ -72,4 +80,10 @@ __all__ = [
     "ProductionRunStatus",
     "OverheadExpenseType",
     "VarianceStatus",
+    "SalesOrder",
+    "SalesOrderItem",
+    "SalesInvoice",
+    "SalesInvoiceItem",
+    "SalesOrderStatus",
+    "InvoiceStatus",
 ]
