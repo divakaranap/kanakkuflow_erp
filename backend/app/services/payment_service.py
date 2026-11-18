@@ -189,6 +189,10 @@ def record_customer_payment(
     )
     db.add(ledger_entry)
 
+    # Post double-entry journal voucher
+    from backend.app.services.accounting_service import post_payment_journal
+    post_payment_journal(db, payment, current_user_id)
+
     db.commit()
     db.refresh(payment)
     return payment

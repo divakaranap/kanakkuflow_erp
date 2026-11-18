@@ -54,6 +54,14 @@ from backend.app.models.payment import (
     PaymentMode,
     PaymentStatus,
 )
+from backend.app.models.accounting import (
+    Account,
+    AccountCategory,
+    AccountType,
+    JournalEntry,
+    JournalEntryLine,
+    AuditLog,
+)
 
 __all__ = [
     "Base",
@@ -106,4 +114,10 @@ __all__ = [
     "CustomerLedgerEntry",
     "PaymentMode",
     "PaymentStatus",
+    "Account",
+    "AccountCategory",
+    "AccountType",
+    "JournalEntry",
+    "JournalEntryLine",
+    "AuditLog",
 ]
