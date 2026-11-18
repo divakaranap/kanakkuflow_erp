@@ -1,17 +1,22 @@
-from typing import List, Optional
+from typing import List, Optional, Any
+from pydantic import Field, AliasChoices, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
     PROJECT_NAME: str = "KANAKKUFLOW"
     API_V1_STR: str = "/api/v1"
+    ENVIRONMENT: str = "development"
     
     # JWT & Security
-    SECRET_KEY: str = "kanakkuflow_super_secret_jwt_key_nit_trichy_2026_challenge"
+    SECRET_KEY: str = Field(
+        default="kanakkuflow_super_secret_jwt_key_nit_trichy_2026_challenge",
+        validation_alias=AliasChoices("JWT_SECRET_KEY", "SECRET_KEY"),
+    )
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24  # 24 hours
     
-    # Database
+    # Database Settings
     POSTGRES_SERVER: str = "localhost"
     POSTGRES_PORT: int = 5432
     POSTGRES_USER: str = "postgres"
@@ -26,6 +31,22 @@ class Settings(BaseSettings):
         "http://127.0.0.1:5173",
         "http://localhost",
     ]
+
+    @field_validator("CORS_ORIGINS", mode="before")
+    @classmethod
+    def assemble_cors_origins(cls, v: Any) -> List[str]:
+        if isinstance(v, str):
+            v_trimmed = v.strip()
+            if v_trimmed.startswith("[") and v_trimmed.endswith("]"):
+                import json
+                try:
+                    return json.loads(v_trimmed)
+                except Exception:
+                    pass
+            return [origin.strip() for origin in v_trimmed.split(",") if origin.strip()]
+        elif isinstance(v, (list, tuple)):
+            return list(v)
+        return ["http://localhost:5173", "http://127.0.0.1:5173"]
     
     # Business defaults
     BENCHMARK_GST_RATE: float = 0.05
@@ -33,7 +54,7 @@ class Settings(BaseSettings):
     DEFAULT_VARIANCE_TOLERANCE_PCT: float = 3.0
     
     # App
-    DEBUG: bool = True
+    DEBUG: bool = False
     
     model_config = SettingsConfigDict(
         env_file=".env",
@@ -46,11 +67,12 @@ class Settings(BaseSettings):
     def sync_database_url(self) -> str:
         if self.DATABASE_URL:
             # Normalize postgres:// or postgresql:// to postgresql+psycopg://
-            if self.DATABASE_URL.startswith("postgresql://"):
-                return self.DATABASE_URL.replace("postgresql://", "postgresql+psycopg://", 1)
-            elif self.DATABASE_URL.startswith("postgres://"):
-                return self.DATABASE_URL.replace("postgres://", "postgresql+psycopg://", 1)
-            return self.DATABASE_URL
+            url = self.DATABASE_URL
+            if url.startswith("postgresql://"):
+                return url.replace("postgresql://", "postgresql+psycopg://", 1)
+            elif url.startswith("postgres://"):
+                return url.replace("postgres://", "postgresql+psycopg://", 1)
+            return url
         return (
             f"postgresql+psycopg://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@"
             f"{self.POSTGRES_SERVER}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"

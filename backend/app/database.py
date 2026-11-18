@@ -5,16 +5,31 @@ from backend.app.config import settings
 
 # Engine setup
 connect_args = {}
-if settings.sync_database_url.startswith("sqlite"):
-    connect_args = {"check_same_thread": False}
+db_url = settings.sync_database_url
 
-engine = create_engine(
-    settings.sync_database_url,
-    echo=False,
-    future=True,
-    pool_pre_ping=True,
-    connect_args=connect_args,
-)
+if db_url.startswith("sqlite"):
+    connect_args = {"check_same_thread": False}
+    engine = create_engine(
+        db_url,
+        echo=False,
+        future=True,
+        connect_args=connect_args,
+    )
+else:
+    # Serverless-friendly connection pool configuration for PostgreSQL.
+    # Small pool size prevents exhausting connection limits on external managed DBs (Neon, Supabase, RDS).
+    # pool_pre_ping validates connection health before handing it to a query.
+    engine = create_engine(
+        db_url,
+        echo=False,
+        future=True,
+        pool_pre_ping=True,
+        pool_size=5,
+        max_overflow=10,
+        pool_recycle=300,
+        pool_timeout=30,
+        connect_args=connect_args,
+    )
 
 SessionLocal = sessionmaker(
     autocommit=False,
