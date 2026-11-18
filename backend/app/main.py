@@ -1,12 +1,15 @@
 import os
 import sys
+import types
 from pathlib import Path
 from contextlib import asynccontextmanager
 
 # ---------------------------------------------------------------------------
-# Path setup: Ensure both repository root and backend directory are in sys.path
-# so that imports like `from backend.app...` work seamlessly when executed
-# from repository root, inside backend/, or within Vercel's serverless runtime.
+# Path & Namespace setup:
+# Ensure repository root and backend directory are in sys.path, and register
+# `backend` virtual module in sys.modules so imports like `from backend.app...`
+# work seamlessly whether executed from repository root, inside backend/,
+# or within Vercel's serverless runtime (/var/task).
 # ---------------------------------------------------------------------------
 _backend_dir = Path(__file__).resolve().parent.parent  # .../backend
 _repo_root = _backend_dir.parent  # .../
@@ -14,6 +17,11 @@ if str(_repo_root) not in sys.path:
     sys.path.insert(0, str(_repo_root))
 if str(_backend_dir) not in sys.path:
     sys.path.insert(0, str(_backend_dir))
+
+if "backend" not in sys.modules:
+    backend_pkg = types.ModuleType("backend")
+    backend_pkg.__path__ = [str(_backend_dir)]
+    sys.modules["backend"] = backend_pkg
 
 from fastapi import FastAPI, APIRouter
 from fastapi.middleware.cors import CORSMiddleware

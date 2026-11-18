@@ -46,6 +46,26 @@ def test_api_v1_health_check(client):
     assert data["app"] == "KANAKKUFLOW"
 
 
+def test_readiness_check(client):
+    """Test /health/ready endpoint."""
+    response = client.get("/health/ready")
+    assert response.status_code in (200, 503)
+    data = response.json()
+    assert "status" in data
+    assert "database" in data
+    assert data["database"] in ("connected", "disconnected")
+
+
+def test_api_readiness_check(client):
+    """Test /api/health/ready endpoint for Vercel routing."""
+    response = client.get("/api/health/ready")
+    assert response.status_code in (200, 503)
+    data = response.json()
+    assert "status" in data
+    assert "database" in data
+    assert data["database"] in ("connected", "disconnected")
+
+
 def test_root_endpoint(client):
     response = client.get("/")
     assert response.status_code == 200
