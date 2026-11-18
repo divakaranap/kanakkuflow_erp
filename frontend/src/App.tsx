@@ -137,6 +137,7 @@ export function App() {
             onLogout={handleLogout}
             healthStatus={healthStatus}
             isSidebarCollapsed={isSidebarCollapsed}
+            onSelectView={setCurrentView}
           />
 
           {/* Main Body Content */}
