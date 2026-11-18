@@ -67,6 +67,13 @@ export function ExecutiveDashboard() {
   const user = authService.getStoredUser()
   const firstName = user?.full_name ? user.full_name.split(' ')[0] : 'Venkatesh'
 
+  const getGreeting = () => {
+    const hour = new Date().getHours()
+    if (hour >= 4 && hour < 12) return 'Good morning'
+    if (hour >= 12 && hour < 17) return 'Good afternoon'
+    return 'Good evening'
+  }
+
   useEffect(() => {
     loadAllDashboardData()
   }, [])
@@ -158,7 +165,7 @@ export function ExecutiveDashboard() {
         <div>
           <div className="flex items-center space-x-2">
             <h1 className="text-2xl sm:text-3xl font-extrabold text-[#17152B] tracking-tight">
-              Good morning, {firstName} 👋
+              {getGreeting()}, {firstName} 👋
             </h1>
             <span className="hidden sm:inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#F2EEFF] text-[#7655E8] border border-[#EAE8F1]">
               <Sparkles className="w-3 h-3 mr-1" /> Kanakkuflow 2.0
